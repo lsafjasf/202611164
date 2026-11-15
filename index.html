@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111826" />
+    <title>FrameLab · Canvas 场景实验台</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23101827'/%3E%3Cpath d='M8 11h16M8 16h9M8 21h16' stroke='%23fff' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#stage">跳到画布工作区</a>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand" aria-label="FrameLab Canvas Studio">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span class="brand-name">FrameLab</span>
+          <span class="brand-rule" aria-hidden="true"></span>
+          <span class="brand-context">Canvas Studio</span>
+        </div>
+
+        <div class="project-heading">
+          <span class="project-kicker">PROJECT 07</span>
+          <h1>城市脉冲 <span>/ City Pulse</span></h1>
+        </div>
+
+        <div class="topbar-actions">
+          <span class="save-state" id="save-state" role="status">
+            <span class="save-dot" aria-hidden="true"></span>
+            本地已保存
+          </span>
+          <button class="icon-button" id="a11y-button" type="button" aria-haspopup="dialog">
+            <span class="a11y-glyph" aria-hidden="true">A</span>
+            <span class="button-label">无障碍</span>
+          </button>
+          <button class="button button-secondary" id="verify-button" type="button">
+            运行验证
+          </button>
+          <button class="button button-primary" id="export-button" type="button">
+            <span aria-hidden="true">↗</span>
+            导出工程
+          </button>
+        </div>
+      </header>
+
+      <main class="workbench">
+        <aside class="layers-panel" aria-labelledby="layers-heading">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">SCENE</span>
+              <h2 id="layers-heading">图层</h2>
+            </div>
+            <span class="count-pill" id="layer-count">8</span>
+          </div>
+
+          <div class="tool-strip" role="toolbar" aria-label="画布工具">
+            <button class="tool-button is-active" id="tool-select" type="button" aria-pressed="true" title="选择工具 (V)">
+              <span aria-hidden="true">↖</span>
+              <span class="sr-only">选择工具</span>
+            </button>
+            <button class="tool-button" id="tool-text" type="button" aria-pressed="false" title="编辑文字 (T)">
+              <span aria-hidden="true">T</span>
+              <span class="sr-only">文字工具</span>
+            </button>
+            <button class="tool-button" id="tool-move" type="button" aria-pressed="false" title="平移画布 (H)">
+              <span aria-hidden="true">✥</span>
+              <span class="sr-only">平移工具</span>
+            </button>
+            <span class="tool-divider" aria-hidden="true"></span>
+            <button class="tool-button" id="undo-button" type="button" title="撤销 (Ctrl+Z)">
+              <span aria-hidden="true">↶</span>
+              <span class="sr-only">撤销</span>
+            </button>
+            <button class="tool-button" id="redo-button" type="button" title="重做 (Ctrl+Shift+Z)">
+              <span aria-hidden="true">↷</span>
+              <span class="sr-only">重做</span>
+            </button>
+          </div>
+
+          <div class="layer-search">
+            <span aria-hidden="true">⌕</span>
+            <label class="sr-only" for="layer-filter">筛选图层</label>
+            <input id="layer-filter" type="search" placeholder="筛选图层" autocomplete="off" />
+          </div>
+
+          <ol class="layer-list" id="layer-list" aria-label="场景图层列表"></ol>
+
+          <div class="panel-note">
+            <span class="key-cluster" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd></span>
+            <span>方向键移动画布对象，<kbd>Shift</kbd> 加速</span>
+          </div>
+        </aside>
+
+        <section class="stage-column" id="stage" aria-labelledby="stage-heading">
+          <h2 class="sr-only" id="stage-heading">画布工作区</h2>
+          <div class="stage-toolbar">
+            <div class="breadcrumb">
+              <span>画布</span>
+              <span aria-hidden="true">/</span>
+              <strong id="selected-crumb">主视觉</strong>
+            </div>
+            <div class="canvas-tools">
+              <button class="mini-button" id="fit-button" type="button">适应窗口</button>
+              <span class="toolbar-divider" aria-hidden="true"></span>
+              <button class="zoom-button" id="zoom-out" type="button" aria-label="缩小画布">−</button>
+              <output class="zoom-value" id="zoom-value" aria-live="polite">82%</output>
+              <button class="zoom-button" id="zoom-in" type="button" aria-label="放大画布">＋</button>
+            </div>
+          </div>
+
+          <div class="canvas-viewport" id="canvas-viewport">
+            <div class="canvas-ruler canvas-ruler-x" aria-hidden="true"></div>
+            <div class="canvas-ruler canvas-ruler-y" aria-hidden="true"></div>
+            <div class="canvas-frame" id="canvas-frame">
+              <canvas
+                id="scene"
+                tabindex="0"
+                width="960"
+                height="640"
+                aria-label="城市脉冲画布。当前选中小标题。使用方向键移动，按住 Shift 加速，按 Escape 取消选择。"
+                aria-describedby="canvas-help"
+              ></canvas>
+              <span class="canvas-corner canvas-corner-tl" aria-hidden="true"></span>
+              <span class="canvas-corner canvas-corner-tr" aria-hidden="true"></span>
+              <span class="canvas-corner canvas-corner-bl" aria-hidden="true"></span>
+              <span class="canvas-corner canvas-corner-br" aria-hidden="true"></span>
+            </div>
+            <div class="live-badge" id="live-badge">
+              <span class="live-dot" aria-hidden="true"></span>
+              <span>LIVE</span>
+              <strong id="fps-badge">60 FPS</strong>
+            </div>
+            <p class="sr-only" id="canvas-help">
+              点击或轻触对象可选择。选中后方向键移动。Tab 可切换到图层列表和属性面板。
+            </p>
+          </div>
+
+          <div class="stage-status">
+            <div class="selection-readout">
+              <span class="selection-swatch" id="selection-swatch" aria-hidden="true"></span>
+              <div>
+                <span class="status-label">已选择</span>
+                <strong id="selected-name">小标题</strong>
+              </div>
+            </div>
+            <div class="position-readout" id="position-readout">X 92 · Y 392</div>
+            <div class="status-spacer"></div>
+            <div class="stage-hint"><kbd>V</kbd> 选择 <kbd>H</kbd> 平移 <kbd>+</kbd> 缩放</div>
+          </div>
+        </section>
+
+        <aside class="inspector-panel" aria-label="性能与属性">
+          <section class="performance-card" aria-labelledby="performance-heading">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">OBSERVABILITY</span>
+                <h2 id="performance-heading">性能面板</h2>
+              </div>
+              <span class="sampling-badge"><span aria-hidden="true"></span>实时采样</span>
+            </div>
+
+            <div class="metric-grid">
+              <article class="metric metric-wide">
+                <div class="metric-label">
+                  <span>帧时间</span>
+                  <span class="metric-target">目标 &lt; 16.7 ms</span>
+                </div>
+                <div class="metric-value-row">
+                  <strong id="metric-frame">—</strong>
+                  <span class="metric-unit">ms</span>
+                  <span class="metric-trend good" id="frame-trend">−22%</span>
+                </div>
+                <svg class="sparkline" id="frame-sparkline" viewBox="0 0 220 34" role="img" aria-label="帧时间趋势">
+                  <path class="sparkline-area" d=""></path>
+                  <path class="sparkline-line" d=""></path>
+                </svg>
+              </article>
+              <article class="metric">
+                <div class="metric-label"><span>绘制对象</span></div>
+                <div class="metric-value-row">
+                  <strong id="metric-objects">—</strong>
+                  <span class="metric-unit">/ <span id="metric-total">—</span></span>
+                </div>
+                <span class="metric-foot" id="objects-foot">视口内绘制</span>
+              </article>
+              <article class="metric">
+                <div class="metric-label"><span>缓存命中率</span></div>
+                <div class="metric-value-row">
+                  <strong id="metric-cache">—</strong>
+                  <span class="metric-unit">%</span>
+                </div>
+                <span class="metric-foot" id="cache-foot">布局 + 阴影</span>
+              </article>
+              <article class="metric">
+                <div class="metric-label"><span>布局耗时</span></div>
+                <div class="metric-value-row">
+                  <strong id="metric-layout">—</strong>
+                  <span class="metric-unit">ms</span>
+                </div>
+                <span class="metric-foot">文本测量 / 换行</span>
+              </article>
+              <article class="metric">
+                <div class="metric-label"><span>绘制调用</span></div>
+                <div class="metric-value-row">
+                  <strong id="metric-calls">—</strong>
+                  <span class="metric-unit">call</span>
+                </div>
+                <span class="metric-foot" id="calls-foot">本帧 Canvas API</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="optimization-card" aria-labelledby="optimization-heading">
+            <div class="section-heading compact">
+              <div>
+                <span class="eyebrow">RENDER PATH</span>
+                <h2 id="optimization-heading">优化开关</h2>
+              </div>
+              <span class="parity-chip" id="parity-chip">画面一致</span>
+            </div>
+
+            <div class="switch-list">
+              <div class="switch-row">
+                <span class="switch-icon shadow-icon" aria-hidden="true"></span>
+                <div class="switch-copy">
+                  <strong>阴影</strong>
+                  <span>缓存柔和投影纹理</span>
+                </div>
+                <button class="switch" id="toggle-shadows" type="button" role="switch" aria-checked="true" aria-label="阴影缓存">
+                  <span></span>
+                </button>
+              </div>
+              <div class="switch-row">
+                <span class="switch-icon sort-icon" aria-hidden="true"></span>
+                <div class="switch-copy">
+                  <strong>排序</strong>
+                  <span>复用稳定的 z-index 顺序</span>
+                </div>
+                <button class="switch" id="toggle-sorting" type="button" role="switch" aria-checked="true" aria-label="排序优化">
+                  <span></span>
+                </button>
+              </div>
+              <div class="switch-row">
+                <span class="switch-icon cull-icon" aria-hidden="true"></span>
+                <div class="switch-copy">
+                  <strong>裁剪</strong>
+                  <span>跳过视口外绘制对象</span>
+                </div>
+                <button class="switch" id="toggle-culling" type="button" role="switch" aria-checked="true" aria-label="视口裁剪">
+                  <span></span>
+                </button>
+              </div>
+            </div>
+            <p class="optimization-note">
+              <span aria-hidden="true">✓</span>
+              仅改变渲染路径；像素摘要在每个基准帧校验。
+            </p>
+          </section>
+
+          <section class="benchmark-card" aria-labelledby="benchmark-heading">
+            <div class="section-heading compact">
+              <div>
+                <span class="eyebrow">FIXED ACTION RUN</span>
+                <h2 id="benchmark-heading">三配置基准</h2>
+              </div>
+              <button class="text-button" id="run-benchmark" type="button">重跑</button>
+            </div>
+            <p class="benchmark-summary" id="benchmark-summary" role="status">正在采样固定动作…</p>
+            <div class="benchmark-table-wrap">
+              <table class="benchmark-table">
+                <caption class="sr-only">三种渲染配置的固定动作性能比较</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">配置</th>
+                    <th scope="col">帧时</th>
+                    <th scope="col">对象</th>
+                    <th scope="col">命中</th>
+                    <th scope="col">布局</th>
+                  </tr>
+                </thead>
+                <tbody id="benchmark-body">
+                  <tr><td colspan="5" class="empty-row">等待采样</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="parity-row">
+              <span class="parity-dot" id="parity-dot" aria-hidden="true"></span>
+              <span id="parity-result">像素一致性待验证</span>
+            </div>
+          </section>
+
+          <section class="selection-card" aria-labelledby="selection-heading">
+            <div class="section-heading compact">
+              <div>
+                <span class="eyebrow">SELECTION</span>
+                <h2 id="selection-heading">所选图层</h2>
+              </div>
+              <span class="layer-type" id="selected-type">TEXT</span>
+            </div>
+            <label class="field-label" for="text-content">文字内容</label>
+            <textarea id="text-content" rows="2" maxlength="64"></textarea>
+            <div class="field-grid">
+              <label class="field">
+                <span>X 坐标</span>
+                <input id="field-x" type="number" min="-500" max="1500" step="1" />
+              </label>
+              <label class="field">
+                <span>Y 坐标</span>
+                <input id="field-y" type="number" min="-500" max="1000" step="1" />
+              </label>
+            </div>
+            <div class="selection-actions">
+              <button class="mini-button" id="reset-layer" type="button">恢复此图层</button>
+              <span id="layer-revision">修订 r1</span>
+            </div>
+          </section>
+
+          <section class="restore-card" aria-labelledby="restore-heading">
+            <div class="restore-icon" aria-hidden="true">↺</div>
+            <div>
+              <h2 id="restore-heading">导出恢复点</h2>
+              <p id="restore-copy">尚未导出。首次导出会保留当前选择与工程快照。</p>
+              <button class="text-button" id="reload-export" type="button" disabled>从导出记录重新载入</button>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <dialog class="report-dialog" id="verify-dialog" aria-labelledby="verify-title">
+      <div class="dialog-header">
+        <div>
+          <span class="eyebrow">REPEATABLE CHECKS</span>
+          <h2 id="verify-title">默认 · 边界 · 错误恢复</h2>
+        </div>
+        <button class="dialog-close" id="close-verify" type="button" aria-label="关闭验证报告">×</button>
+      </div>
+      <div class="report-summary">
+        <div class="report-score">
+          <strong id="verify-rate">—</strong>
+          <span>成功率</span>
+        </div>
+        <div class="report-overview">
+          <strong id="verify-verdict">正在运行可重复验证</strong>
+          <p id="verify-detail">每组使用固定随机种子、固定动作与固定画面摘要。</p>
+        </div>
+        <span class="report-status pending" id="verify-status">RUNNING</span>
+      </div>
+      <div class="report-table-wrap">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th scope="col">测试组</th>
+              <th scope="col">检查</th>
+              <th scope="col">结果</th>
+              <th scope="col">说明 / 失败原因</th>
+            </tr>
+          </thead>
+          <tbody id="verify-body"></tbody>
+        </table>
+      </div>
+      <div class="dialog-footer">
+        <span id="verify-timestamp">—</span>
+        <div class="dialog-actions">
+          <button class="button button-secondary" id="dialog-a11y" type="button">无障碍摘要</button>
+          <button class="button button-primary" id="rerun-verify" type="button">重新运行</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="report-dialog a11y-dialog" id="a11y-dialog" aria-labelledby="a11y-title">
+      <div class="dialog-header">
+        <div>
+          <span class="eyebrow">ACCESSIBILITY CHECK</span>
+          <h2 id="a11y-title">无障碍检查摘要</h2>
+        </div>
+        <button class="dialog-close" id="close-a11y" type="button" aria-label="关闭无障碍摘要">×</button>
+      </div>
+      <div class="a11y-hero">
+        <div class="a11y-score">
+          <strong id="a11y-rate">—</strong>
+          <span>路径通过</span>
+        </div>
+        <p id="a11y-summary">等待浏览器验证结果。</p>
+      </div>
+      <div class="a11y-sections" id="a11y-sections"></div>
+      <div class="dialog-footer">
+        <span>键盘 · 鼠标 · 触屏 · 焦点 · 读屏播报 · 错误恢复</span>
+        <div class="dialog-actions">
+          <button class="button button-primary" id="close-a11y-footer" type="button">完成</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="sr-only" id="selection-announcer" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div class="sr-only" id="error-announcer" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

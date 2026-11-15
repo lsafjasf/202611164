@@ -1,0 +1,18 @@
+{
+  "name": "framelab-canvas-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Canvas scene editor with render optimization benchmarks and restore-safe exports.",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs",
+    "test": "node --test tests/*.test.js",
+    "benchmark": "node scripts/benchmark.mjs",
+    "verify": "node tests/browser.mjs",
+    "check": "npm test && npm run benchmark && npm run verify"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.1"
+  }
+}
