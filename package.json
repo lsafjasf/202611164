@@ -1,0 +1,12 @@
+{
+  "name": "keyframe-project-importer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "分块解析、可取消、带字段级校验的关键帧工程导入器",
+  "scripts": {
+    "test": "node test/compare.js && node test/smoke.js",
+    "compare": "node test/compare.js",
+    "smoke": "node test/smoke.js",
+    "serve": "python3 -m http.server 8000"
+  }
+}
