@@ -1,0 +1,7 @@
+node_modules/
+test-results/
+playwright-report/
+artifacts/*.png
+artifacts/*.css
+artifacts/*.url
+artifacts/font-chars.txt

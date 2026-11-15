@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111716">
+  <title>ChromaGuard · 色觉无障碍配色台</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <a class="brand" href="#overview" aria-label="ChromaGuard 首页">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Chroma<span>Guard</span></span>
+      </a>
+
+      <nav class="side-nav" aria-label="工作区">
+        <a class="nav-item is-active" href="#overview" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+          总览
+        </a>
+        <a class="nav-item" href="#palette-panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18h1.2a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h3a5 5 0 0 0 0-10h-3Z"/><circle cx="7.5" cy="9" r="1"/><circle cx="10" cy="6.5" r="1"/><circle cx="7.5" cy="13" r="1"/></svg>
+          配色令牌
+        </a>
+        <a class="nav-item" href="#test-panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+          可重复测试
+        </a>
+        <a class="nav-item" href="#a11y-panel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M5 8h14M12 8v5m0 0-3 7m3-7 3 7"/></svg>
+          无障碍记录
+        </a>
+      </nav>
+
+      <div class="sidebar-project">
+        <div class="project-topline">
+          <span class="project-icon" aria-hidden="true">Q4</span>
+          <span class="project-dot" aria-hidden="true"></span>
+        </div>
+        <p class="project-label">当前工程</p>
+        <p class="project-name">Q4 Analytics</p>
+        <p class="project-meta"><span id="sidebarSaved">本地已保存</span> · <span>v1.0</span></p>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="vision-key" aria-label="色觉模拟图例">
+          <span><i class="dot dot-normal"></i>普通</span>
+          <span><i class="dot dot-rg"></i>红绿</span>
+          <span><i class="dot dot-by"></i>蓝黄</span>
+        </div>
+        <p>WCAG 2.2 · ΔE 76</p>
+      </div>
+    </aside>
+
+    <main id="main-content" class="main-content" tabindex="-1">
+      <header class="topbar" id="overview">
+        <div class="topbar-title">
+          <button class="icon-button mobile-menu" id="mobileMenu" type="button" aria-label="打开导航" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div>
+            <p class="breadcrumb">工程 / Q4 Analytics / 配色审计</p>
+            <h1>色觉无障碍工作台</h1>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="save-state" id="saveState" role="status">
+            <span class="save-dot" aria-hidden="true"></span>
+            <span id="saveLabel">所有更改已保存</span>
+          </div>
+          <button class="button button-ghost" id="exportCssTop" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
+            导出 CSS
+          </button>
+          <button class="button button-primary" id="exportPngTop" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 17v3h14v-3"/></svg>
+            导出预览 PNG
+          </button>
+        </div>
+      </header>
+
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span> LIVE PALETTE AUDIT</div>
+          <h2 id="hero-title">颜色不止要被看见，<br><em>更要被分辨。</em></h2>
+          <p>锁定关键色，生成其余令牌，并在普通视觉、红绿弱视与蓝黄弱视下同步检查对比度和色差。</p>
+        </div>
+        <div class="hero-score">
+          <div class="score-ring" id="scoreRing" role="img" aria-label="综合无障碍评分 94 分">
+            <span id="scoreValue">94</span>
+            <small>/ 100</small>
+          </div>
+          <div>
+            <p class="score-label">综合可访问性</p>
+            <p class="score-status" id="overallStatus"><span></span> 无阻断风险</p>
+            <p class="score-caption" id="scoreCaption">8 色 · 3 种视觉 · 自动校验</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="metric-grid" aria-label="视觉模式检查结果">
+        <article class="metric-card" data-mode-card="normal">
+          <div class="metric-head"><span class="metric-icon normal-icon" aria-hidden="true">N</span><span>普通视觉</span><span class="metric-badge" id="normalBadge">通过</span></div>
+          <p class="metric-value"><span id="normalScore">96</span><small>/100</small></p>
+          <div class="metric-track"><i id="normalTrack"></i></div>
+          <p class="metric-foot"><span>最低 ΔE <b id="normalMinDelta">—</b></span><span>对比度 <b id="normalContrast">—</b></span></p>
+        </article>
+        <article class="metric-card" data-mode-card="deuteranopia">
+          <div class="metric-head"><span class="metric-icon rg-icon" aria-hidden="true">RG</span><span>红绿弱视</span><span class="metric-badge" id="deuteranopiaBadge">通过</span></div>
+          <p class="metric-value"><span id="deuteranopiaScore">91</span><small>/100</small></p>
+          <div class="metric-track"><i id="deuteranopiaTrack"></i></div>
+          <p class="metric-foot"><span>最低 ΔE <b id="deuteranopiaMinDelta">—</b></span><span>对比度 <b id="deuteranopiaContrast">—</b></span></p>
+        </article>
+        <article class="metric-card" data-mode-card="tritanopia">
+          <div class="metric-head"><span class="metric-icon by-icon" aria-hidden="true">BY</span><span>蓝黄弱视</span><span class="metric-badge" id="tritanopiaBadge">通过</span></div>
+          <p class="metric-value"><span id="tritanopiaScore">89</span><small>/100</small></p>
+          <div class="metric-track"><i id="tritanopiaTrack"></i></div>
+          <p class="metric-foot"><span>最低 ΔE <b id="tritanopiaMinDelta">—</b></span><span>对比度 <b id="tritanopiaContrast">—</b></span></p>
+        </article>
+        <article class="metric-card metric-card--summary">
+          <div class="metric-head"><span class="metric-icon lock-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </span><span>颜色锁定</span></div>
+          <p class="metric-value"><span id="lockedCount">3</span><small>/ 8</small></p>
+          <p class="metric-summary-copy" id="lockSummary">关键品牌色受到保护</p>
+          <button class="text-button" id="jumpToPalette" type="button">管理锁定 <span aria-hidden="true">→</span></button>
+        </article>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel preview-panel" aria-labelledby="preview-title" id="preview-panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker">CANVAS / LIVE PREVIEW</p>
+              <h2 id="preview-title">三重视觉预览</h2>
+            </div>
+            <div class="panel-tools">
+              <span class="live-tag"><i aria-hidden="true"></i>实时渲染</span>
+              <button class="icon-button" id="redrawCanvases" type="button" aria-label="重新绘制三套图表">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg>
+              </button>
+            </div>
+          </div>
+          <p class="panel-intro">同一组图表数据在不同色觉条件下并排呈现；画布下方列出最低色差与图形对比度。</p>
+          <div class="canvas-grid">
+            <figure class="canvas-card" data-view="normal">
+              <figcaption><span class="view-dot view-normal" aria-hidden="true"></span><span>普通视觉</span><b id="canvasNormalLabel">标准</b></figcaption>
+              <canvas id="normalCanvas" width="720" height="480" role="img" aria-label="普通视觉下的季度转化图表"></canvas>
+              <p class="canvas-note" id="normalNote">5 条序列 · 对比与色差均正常</p>
+            </figure>
+            <figure class="canvas-card" data-view="deuteranopia">
+              <figcaption><span class="view-dot view-rg" aria-hidden="true"></span><span>红绿弱视模拟</span><b id="canvasRgLabel">Deuteranopia</b></figcaption>
+              <canvas id="deuteranopiaCanvas" width="720" height="480" role="img" aria-label="红绿弱视模拟下的季度转化图表"></canvas>
+              <p class="canvas-note" id="deuteranopiaNote">模拟绿色与红色感受缺失</p>
+            </figure>
+            <figure class="canvas-card" data-view="tritanopia">
+              <figcaption><span class="view-dot view-by" aria-hidden="true"></span><span>蓝黄弱视模拟</span><b id="canvasTritanopiaLabel">Tritanopia</b></figcaption>
+              <canvas id="tritanopiaCanvas" width="720" height="480" role="img" aria-label="蓝黄弱视模拟下的季度转化图表"></canvas>
+              <p class="canvas-note" id="tritanopiaNote">模拟蓝色与黄色感受缺失</p>
+            </figure>
+          </div>
+        </section>
+
+        <aside class="panel palette-panel" aria-labelledby="palette-title" id="palette-panel">
+          <div class="panel-head panel-head--compact">
+            <div>
+              <p class="panel-kicker">TOKENS / 08</p>
+              <h2 id="palette-title">配色令牌</h2>
+            </div>
+            <button class="icon-button" id="resetPalette" type="button" aria-label="恢复默认配色">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6M20 20v-6h-6M5.5 15a8 8 0 0 0 13.3 2M18.5 9A8 8 0 0 0 5.2 7"/></svg>
+            </button>
+          </div>
+          <div class="lock-banner">
+            <span class="lock-banner-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </span>
+            <p><strong>锁定即保护</strong><span>重新生成时不会改动已锁定颜色。</span></p>
+          </div>
+          <div class="palette-list" id="paletteList" role="list" aria-label="配色令牌列表"></div>
+          <div class="regen-box">
+            <div class="seed-row">
+              <label for="seedInput">生成种子</label>
+              <input id="seedInput" type="text" value="QG-2048" maxlength="20" spellcheck="false" aria-describedby="seedHelp">
+              <span id="seedHelp">固定种子，结果可重复</span>
+            </div>
+            <button class="button button-generate" id="regenerateButton" type="button">
+              <span class="generate-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3ZM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></svg>
+              </span>
+              <span><strong>重新生成未锁定色</strong><small id="regenHint">保持 3 个关键色，优化 5 个令牌</small></span>
+              <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <div class="lower-grid">
+        <section class="panel risk-panel" aria-labelledby="risk-title">
+          <div class="panel-head panel-head--compact">
+            <div>
+              <p class="panel-kicker">RISK REPORT</p>
+              <h2 id="risk-title">风险提示</h2>
+            </div>
+            <span class="risk-count" id="riskCount">0 项</span>
+          </div>
+          <div class="risk-list" id="riskList" aria-live="polite"></div>
+          <div class="risk-footer">
+            <p>检查规则：文字对比度 ≥ 4.5:1 · 序列对比度 ≥ 3:1 · 成对 ΔE ≥ 12</p>
+            <button class="text-button" id="viewRules" type="button">查看判定规则 <span aria-hidden="true">→</span></button>
+          </div>
+        </section>
+
+        <section class="panel snapshot-panel" aria-labelledby="snapshot-title">
+          <div class="panel-head panel-head--compact">
+            <div>
+              <p class="panel-kicker">EXPORT SAFETY</p>
+              <h2 id="snapshot-title">导出前状态</h2>
+            </div>
+            <span class="snapshot-badge" id="snapshotBadge">等待导出</span>
+          </div>
+          <div class="snapshot-body">
+            <div class="snapshot-graphic" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+              <svg viewBox="0 0 24 24"><path d="m7 12 3 3 7-7"/></svg>
+            </div>
+            <div>
+              <p id="snapshotText">导出时会冻结当前色板与锁定状态，可随时恢复。</p>
+              <p class="snapshot-meta" id="snapshotMeta">尚未生成快照</p>
+            </div>
+          </div>
+          <div class="snapshot-actions">
+            <button class="button button-ghost button-small" id="restoreSnapshot" type="button" disabled>恢复导出前状态</button>
+            <button class="text-button" id="exportProject" type="button">保存工程 JSON <span aria-hidden="true">↓</span></button>
+          </div>
+          <div class="activity-log" aria-label="最近操作记录">
+            <p class="activity-title">最近操作</p>
+            <ol id="activityList"></ol>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel test-panel" id="test-panel" aria-labelledby="test-title">
+        <div class="test-head">
+          <div>
+            <p class="panel-kicker">REPEATABLE HARNESS / 03 GROUPS</p>
+            <h2 id="test-title">可重复测试</h2>
+            <p>每组均从隔离快照开始，验证锁定保护、边界输入和错误回滚。测试不会污染当前工程。</p>
+          </div>
+          <div class="test-summary" id="testSummary" role="status" aria-live="polite">
+            <span class="summary-main"><b id="testPassRate">—</b><small>通过率</small></span>
+            <span class="summary-detail" id="testSummaryDetail">尚未运行</span>
+          </div>
+        </div>
+        <div class="test-grid" id="testGrid">
+          <article class="test-card" data-test="default">
+            <div class="test-card-head"><span class="test-index">01</span><span class="test-state" data-state>待运行</span></div>
+            <h3>默认路径</h3>
+            <p>8 色完整色板、无锁定，验证三视图计算与确定性重生成。</p>
+            <div class="test-progress"><i data-progress></i></div>
+            <ul class="test-details" data-details>
+              <li>等待执行</li>
+            </ul>
+            <button class="button button-test" type="button" data-run-test="default">单独运行</button>
+          </article>
+          <article class="test-card" data-test="boundary">
+            <div class="test-card-head"><span class="test-index">02</span><span class="test-state" data-state>待运行</span></div>
+            <h3>边界路径</h3>
+            <p>6 个颜色锁定、2 个待生成，检查锁定色零漂移及极端对比风险提示。</p>
+            <div class="test-progress"><i data-progress></i></div>
+            <ul class="test-details" data-details>
+              <li>等待执行</li>
+            </ul>
+            <button class="button button-test" type="button" data-run-test="boundary">单独运行</button>
+          </article>
+          <article class="test-card" data-test="error">
+            <div class="test-card-head"><span class="test-index">03</span><span class="test-state" data-state>待运行</span></div>
+            <h3>错误恢复</h3>
+            <p>注入非法色值并触发保存，确认错误被明确说明且原状态完整回滚。</p>
+            <div class="test-progress"><i data-progress></i></div>
+            <ul class="test-details" data-details>
+              <li>等待执行</li>
+            </ul>
+            <button class="button button-test" type="button" data-run-test="error">单独运行</button>
+          </article>
+        </div>
+        <div class="test-footer">
+          <p id="testFooterText">隔离执行 · 固定种子 · 每项都有明确断言与失败原因</p>
+          <div class="test-actions">
+            <button class="button button-ghost button-small" id="exportTestLog" type="button">导出测试日志</button>
+            <button class="button button-primary" id="runAllTests" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7V5Z"/></svg>
+              运行全部
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel a11y-panel" id="a11y-panel" aria-labelledby="a11y-title">
+        <div class="a11y-copy">
+          <p class="panel-kicker">ACCESSIBILITY RECORD</p>
+          <h2 id="a11y-title">无障碍检查摘要</h2>
+          <p>已记录键盘、鼠标、触屏等价路径，错误恢复，状态持久化与导出验证。</p>
+        </div>
+        <div class="a11y-checks" id="a11yChecks">
+          <span><i aria-hidden="true">✓</i> 键盘可达</span>
+          <span><i aria-hidden="true">✓</i> 焦点可见</span>
+          <span><i aria-hidden="true">✓</i> 读屏播报</span>
+          <span><i aria-hidden="true">✓</i> 错误可恢复</span>
+        </div>
+        <button class="button button-ghost" id="downloadA11y" type="button">保存检查摘要</button>
+      </section>
+
+      <footer class="page-footer">
+        <p>ChromaGuard Palette Lab · WCAG 2.2 AA · CIE76 ΔE · Machado CVD matrices</p>
+        <p id="footerSaved">本地自动保存已启用</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+  <p class="sr-only" id="liveStatus" role="status" aria-live="polite" aria-atomic="true"></p>
+  <dialog class="rules-dialog" id="rulesDialog" aria-labelledby="rulesTitle">
+    <div class="dialog-head">
+      <div>
+        <p class="panel-kicker">VALIDATION MODEL</p>
+        <h2 id="rulesTitle">判定规则</h2>
+      </div>
+      <button class="icon-button" id="closeRules" type="button" aria-label="关闭判定规则">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="rules-content">
+      <div><b>4.5 : 1</b><p>正文与背景的最小对比度。Canvas 标签使用深色文字，不单独依赖序列色。</p></div>
+      <div><b>3 : 1</b><p>图形与相邻背景的对比度。大面积图形可接受较低门槛。</p></div>
+      <div><b>ΔE ≥ 12</b><p>色板相邻令牌在三种视觉模拟下的 CIE76 色差安全线。</p></div>
+      <div><b>0 漂移</b><p>重新生成前后，锁定色值必须逐字节一致。</p></div>
+    </div>
+    <p class="dialog-note">模拟基于 Machado 2009 矩阵，仅用于设计检查，不替代医学诊断。</p>
+    <button class="button button-primary" id="rulesDone" type="button">知道了</button>
+  </dialog>
+
+  <script src="color.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
