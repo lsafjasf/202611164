@@ -1,0 +1,69 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #10131a;
+  color: #dfe6f0;
+}
+header { padding: 14px 22px 4px; }
+header h1 { margin: 0; font-size: 20px; }
+header p { margin: 4px 0 0; color: #8b96a8; font-size: 13px; }
+main { display: flex; flex-wrap: wrap; gap: 16px; padding: 14px 22px 22px; }
+.stage {
+  background: #171c26;
+  border: 1px solid #262e3d;
+  border-radius: 10px;
+  padding: 12px;
+}
+canvas { display: block; background: #0b0e14; border-radius: 8px; }
+.transport { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+button {
+  background: #243149;
+  color: #dfe6f0;
+  border: 1px solid #35466a;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+button:hover { background: #2e3f5e; }
+button:disabled { opacity: 0.45; cursor: default; }
+label { font-size: 13px; display: flex; align-items: center; gap: 6px; color: #aeb9ca; }
+input[type="range"] { width: 110px; accent-color: #5aa2ff; }
+.chk input { accent-color: #5aa2ff; }
+.lamp {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #2a3242; margin-top: 10px;
+  transition: background 0.05s;
+}
+.lamp.on { background: #ffd75a; box-shadow: 0 0 12px #ffd75a; }
+.tracks { display: flex; flex-direction: column; gap: 10px; flex: 1; min-width: 380px; }
+.track {
+  background: #171c26;
+  border: 1px solid #262e3d;
+  border-left: 4px solid #888;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.track h3 { margin: 0 0 8px; font-size: 14px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.track h3 span { font-weight: normal; color: #8b96a8; font-size: 12px; }
+.steps { display: flex; gap: 4px; margin-top: 8px; }
+.step {
+  width: 20px; height: 26px; border-radius: 4px;
+  background: #232b3a; border: 1px solid #2f3a4f;
+  cursor: pointer; padding: 0;
+}
+.step.beat4 { border-color: #46587e; }
+.step.on { background: #5aa2ff; border-color: #8cc0ff; }
+.track select {
+  background: #232b3a; color: #dfe6f0; border: 1px solid #2f3a4f;
+  border-radius: 4px; padding: 3px 6px; font-size: 12px;
+}
+.logwrap { width: 100%; }
+.logwrap h2 { font-size: 14px; margin: 0 0 6px; color: #8b96a8; }
+#log {
+  background: #0b0e14; border: 1px solid #262e3d; border-radius: 8px;
+  min-height: 120px; max-height: 220px; overflow: auto;
+  padding: 10px 12px; font-size: 12px; line-height: 1.6; margin: 0;
+  white-space: pre-wrap;
+}

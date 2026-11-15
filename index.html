@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D 房间打击乐音序器</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>3D 房间打击乐音序器</h1>
+  <p>四个打击声源沿固定路径移动 · 墙边反射增强 · 双耳监听 · 可导出混音</p>
+</header>
+
+<main>
+  <section class="stage">
+    <canvas id="room" width="720" height="560"></canvas>
+    <div class="transport">
+      <button id="btnPlay">▶ 播放</button>
+      <button id="btnPause">⏸ 暂停</button>
+      <button id="btnStop">⏹ 停止</button>
+      <label class="chk"><input type="checkbox" id="chkLoop" checked> 循环</label>
+      <label>BPM <input type="range" id="rngBpm" min="60" max="180" value="120"><span id="valBpm">120</span></label>
+      <label>速度 <input type="range" id="rngSpeed" min="0.5" max="2" step="0.05" value="1"><span id="valSpeed">1.00×</span></label>
+    </div>
+    <div class="transport">
+      <button id="btnSave">💾 保存工程</button>
+      <button id="btnLoad">📂 载入工程</button>
+      <button id="btnExport">⬇ 导出双耳混音 (WAV)</button>
+      <button id="btnCompare">⚖ 对比验证(首轮 vs 重载)</button>
+    </div>
+    <div id="beatLamp" class="lamp"></div>
+  </section>
+
+  <section class="tracks" id="trackPanels"></section>
+
+  <section class="logwrap">
+    <h2>状态日志</h2>
+    <pre id="log"></pre>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
