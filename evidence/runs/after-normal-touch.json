@@ -1,0 +1,55 @@
+{
+  "scenario": "normal",
+  "project": "touch",
+  "initial": {
+    "shapes": 2,
+    "points": 12,
+    "scale": 0.88
+  },
+  "final": {
+    "shapes": 2,
+    "points": 12,
+    "scale": 0.88,
+    "selected": "seed-orbit",
+    "listeners": 12,
+    "bitmapMiB": 4.40277099609375,
+    "render": {
+      "count": 12,
+      "lastMs": 0.10000000149011612,
+      "avgMs": 0.39166666753590107,
+      "p95Ms": 2.600000001490116,
+      "samples": [
+        2.600000001490116,
+        0.30000000074505806,
+        0.19999999925494194,
+        0.10000000149011612,
+        0.10000000149011612,
+        0.30000000074505806,
+        0.30000000074505806,
+        0.19999999925494194,
+        0.20000000298023224,
+        0.09999999776482582,
+        0.20000000298023224,
+        0.10000000149011612
+      ]
+    },
+    "counters": {
+      "pointerEvents": 7,
+      "wheelEvents": 0,
+      "zoomEvents": 1,
+      "panEvents": 1,
+      "drawEvents": 0,
+      "longPressEvents": 1,
+      "errors": 0,
+      "renderErrors": 0
+    },
+    "errors": []
+  },
+  "assertions": {
+    "singleFingerPanned": true,
+    "pinchZoomed": true,
+    "longPressSelected": true,
+    "touchNeverDrew": true,
+    "pageScrollIsolated": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "scenario": "normal",
+  "project": "touch",
+  "initial": {
+    "shapes": 2,
+    "points": 12,
+    "bitmapBytes": 789264
+  },
+  "final": {
+    "shapes": 4,
+    "points": 16,
+    "listeners": 4,
+    "bitmapBytes": 789264,
+    "view": {
+      "x": 0,
+      "y": 0,
+      "scale": 1
+    },
+    "pageScrollY": 300,
+    "errors": []
+  },
+  "assertions": {
+    "singleFingerDrew": true,
+    "pinchDrew": true,
+    "viewChanged": false,
+    "pageScrollLeaked": true
+  }
+}

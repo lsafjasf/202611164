@@ -1,0 +1,29 @@
+{
+  "scenario": "corrupt",
+  "project": "desktop",
+  "repeatable": true,
+  "runs": [
+    {
+      "banner": "检测到 1 项问题，已隔离原始数据并载入可用内容。异常记录已保留。",
+      "errors": [
+        "JSON_INVALID"
+      ],
+      "shapes": 2,
+      "points": 12,
+      "listeners": 12,
+      "bitmapBytes": 1687440,
+      "storageBytes": 455
+    },
+    {
+      "banner": "检测到 1 项问题，已隔离原始数据并载入可用内容。异常记录已保留。",
+      "errors": [
+        "JSON_INVALID"
+      ],
+      "shapes": 2,
+      "points": 12,
+      "listeners": 12,
+      "bitmapBytes": 1687440,
+      "storageBytes": 455
+    }
+  ]
+}

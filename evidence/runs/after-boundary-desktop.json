@@ -1,0 +1,52 @@
+{
+  "scenario": "boundary",
+  "project": "desktop",
+  "final": {
+    "scale": 0.5135062006764374,
+    "shapes": 3,
+    "selected": "seed-orbit",
+    "rect": {
+      "left": 25,
+      "top": 149,
+      "width": 506,
+      "height": 674
+    },
+    "errors": [],
+    "resources": {
+      "shapes": 3,
+      "points": 15,
+      "activePointers": 0,
+      "listeners": 12,
+      "bitmapBytes": 1364176,
+      "bitmapMiB": 1.3009796142578125,
+      "dpr": 1,
+      "canvasWidth": 506,
+      "canvasHeight": 674,
+      "heapMiB": 9.5367431640625
+    },
+    "render": {
+      "count": 11,
+      "lastMs": 0.09999999776482582,
+      "avgMs": 0.3909090906381607,
+      "p95Ms": 1.2000000029802322,
+      "samples": [
+        1.2000000029802322,
+        0.30000000074505806,
+        0.19999999925494194,
+        0.19999999925494194,
+        0.19999999925494194,
+        0.29999999701976776,
+        0.30000000074505806,
+        0.19999999925494194,
+        1.1000000014901161,
+        0.19999999925494194,
+        0.09999999776482582
+      ]
+    }
+  },
+  "assertions": {
+    "maxClamp": true,
+    "minClamp": true,
+    "rotatedClickSelected": true
+  }
+}

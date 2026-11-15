@@ -1,0 +1,40 @@
+{
+  "scenario": "normal",
+  "project": "desktop",
+  "initial": {
+    "shapes": 2,
+    "points": 12,
+    "listeners": 12,
+    "errors": 0
+  },
+  "final": {
+    "shapes": 3,
+    "points": 25,
+    "listeners": 12,
+    "bitmapMiB": 1.6092681884765625,
+    "lastRenderMs": 0.19999999925494194,
+    "avgRenderMs": 0.40769230746305907,
+    "p95RenderMs": 2.699999999254942,
+    "errors": [],
+    "counters": {
+      "pointerEvents": 15,
+      "wheelEvents": 2,
+      "zoomEvents": 1,
+      "panEvents": 1,
+      "drawEvents": 1,
+      "longPressEvents": 0,
+      "errors": 0,
+      "renderErrors": 0
+    }
+  },
+  "assertions": {
+    "pageIsolated": true,
+    "zoomDidNotDraw": true,
+    "crosshairVisible": true,
+    "jsonExportShapeCount": 3,
+    "pngExportSize": {
+      "width": 1780,
+      "height": 948
+    }
+  }
+}

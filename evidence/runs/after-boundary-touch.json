@@ -1,0 +1,74 @@
+{
+  "scenario": "boundary",
+  "project": "touch",
+  "beforeRotation": {
+    "rect": {
+      "left": 14,
+      "top": 180,
+      "width": 384,
+      "height": 436.265625
+    },
+    "scale": 0.88
+  },
+  "afterRotation": {
+    "rect": {
+      "left": 25,
+      "top": 149,
+      "width": 561,
+      "height": 637.15625
+    },
+    "view": {
+      "x": -160.5,
+      "y": -122.421875,
+      "scale": 1.47
+    },
+    "selected": "seed-orbit",
+    "target": {
+      "x": 114.4,
+      "y": 394.078125,
+      "local": {
+        "x": 89.4,
+        "y": 245.078125
+      },
+      "box": {
+        "x": 25,
+        "y": 149,
+        "width": 561,
+        "height": 637.15625
+      }
+    },
+    "resources": {
+      "shapes": 2,
+      "points": 12,
+      "activePointers": 0,
+      "listeners": 12,
+      "bitmapBytes": 9857316,
+      "bitmapMiB": 9.40066909790039,
+      "dpr": 2.625,
+      "canvasWidth": 1473,
+      "canvasHeight": 1673,
+      "heapMiB": 9.5367431640625
+    },
+    "render": {
+      "count": 8,
+      "lastMs": 0.20000000298023224,
+      "avgMs": 1.0750000006519258,
+      "p95Ms": 4.800000000745058,
+      "samples": [
+        2.599999997764826,
+        0.19999999925494194,
+        4.800000000745058,
+        0.20000000298023224,
+        0.19999999925494194,
+        0.20000000298023224,
+        0.19999999925494194,
+        0.20000000298023224
+      ]
+    },
+    "errors": []
+  },
+  "assertions": {
+    "sizeChanged": true,
+    "rotatedHitSelected": true
+  }
+}

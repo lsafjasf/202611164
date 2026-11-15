@@ -1,0 +1,46 @@
+{
+  "scenario": "boundary",
+  "project": "touch",
+  "beforeRotation": {
+    "rect": {
+      "width": 378,
+      "height": 522,
+      "left": 18,
+      "top": 134.875
+    },
+    "cachedRect": {
+      "width": 378,
+      "height": 522,
+      "left": 18,
+      "top": 123.875
+    }
+  },
+  "afterRotation": {
+    "rect": {
+      "width": 881,
+      "height": 522,
+      "left": 18,
+      "top": 134.875
+    },
+    "cachedRect": {
+      "width": 378,
+      "height": 522,
+      "left": 18,
+      "top": 123.875
+    },
+    "selected": null,
+    "visualTarget": {
+      "x": 769.1269841269841,
+      "y": 150
+    },
+    "shapes": 3,
+    "points": 14,
+    "listeners": 4,
+    "bitmapBytes": 789264,
+    "errors": []
+  },
+  "assertions": {
+    "rotatedClickMissedSeed": true,
+    "cachedRectStale": true
+  }
+}

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#f0eee7" />
+    <title>准星画布 · 跨设备绘图</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="准星画布首页">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+          <span>
+            <strong>准星画布</strong>
+            <small>CROSSHAIR / 01</small>
+          </span>
+        </a>
+        <div class="tool-switcher" role="group" aria-label="画布工具">
+          <button class="tool is-active" type="button" data-tool="draw" aria-pressed="true">
+            <span class="tool-key">D</span>绘制
+          </button>
+          <button class="tool" type="button" data-tool="select" aria-pressed="false">
+            <span class="tool-key">V</span>选择
+          </button>
+          <button class="tool" type="button" data-tool="pan" aria-pressed="false">
+            <span class="tool-key">H</span>移动
+          </button>
+        </div>
+        <div class="top-metrics" aria-label="实时状态">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span><b id="top-gesture">空闲</b></span>
+          <span class="metric-divider" aria-hidden="true"></span>
+          <span><b id="top-latency">—</b> 渲染</span>
+          <span class="metric-divider" aria-hidden="true"></span>
+          <span><b id="top-errors">0</b> 异常</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="stage-panel" aria-labelledby="stage-title">
+          <div class="stage-heading">
+            <div>
+              <div class="eyebrow">INFINITE SURFACE · 无限画布</div>
+              <h1 id="stage-title">工作区 <span id="object-count">0</span></h1>
+            </div>
+            <div class="view-controls" role="group" aria-label="视图控制">
+              <button type="button" id="zoom-out" aria-label="缩小">−</button>
+              <output id="zoom-level" aria-live="polite">100%</output>
+              <button type="button" id="zoom-in" aria-label="放大">+</button>
+              <button class="reset-view" type="button" id="reset-view">适合视图</button>
+            </div>
+          </div>
+
+          <div class="canvas-frame" id="canvas-frame">
+            <canvas
+              id="canvas"
+              tabindex="0"
+              aria-label="绘图画布。鼠标滚轮平移，Ctrl 加滚轮缩放；单指平移，双指缩放，长按选择。"
+            ></canvas>
+            <div class="canvas-corner corner-tl" aria-hidden="true"></div>
+            <div class="canvas-corner corner-tr" aria-hidden="true"></div>
+            <div class="canvas-corner corner-bl" aria-hidden="true"></div>
+            <div class="canvas-corner corner-br" aria-hidden="true"></div>
+            <div class="canvas-chip">
+              <span class="crosshair-icon" aria-hidden="true"></span>
+              <span>准星在线</span>
+              <b id="dpr-label">1×</b>
+            </div>
+            <div class="gesture-toast" id="gesture-toast" role="status" aria-live="polite"></div>
+            <div class="error-banner" id="error-banner" role="alert" hidden>
+              <div>
+                <strong id="error-title">画布恢复</strong>
+                <p id="error-message"></p>
+              </div>
+              <button type="button" id="recover-button">恢复默认画布</button>
+            </div>
+            <div class="fatal-panel" id="fatal-panel" hidden>
+              <span class="fatal-index">RECOVERY / 01</span>
+              <h2>画布未能启动</h2>
+              <p id="fatal-message">渲染上下文创建失败。</p>
+              <button type="button" id="retry-button">重新初始化</button>
+            </div>
+          </div>
+
+          <footer class="stage-footer">
+            <div class="gesture-legend">
+              <span><i class="glyph mouse"></i>滚轮平移</span>
+              <span><i class="glyph pinch"></i>双指缩放</span>
+              <span><i class="glyph hold"></i>长按选择</span>
+            </div>
+            <p class="isolation-note">
+              <span class="lock-dot" aria-hidden="true"></span>
+              画布手势已隔离 · 页面空白处仍可滚动
+            </p>
+          </footer>
+        </section>
+
+        <aside class="inspector" aria-label="实时诊断">
+          <section class="panel current-panel">
+            <div class="panel-label">当前状态 <span>LIVE</span></div>
+            <div class="mode-row">
+              <div>
+                <div class="mode-name" id="current-mode" data-testid="current-mode">绘制工具</div>
+                <div class="mode-sub" id="current-input">等待输入 · 鼠标 / 触控板 / 触屏</div>
+              </div>
+              <span class="mode-badge" id="gesture-badge">空闲</span>
+            </div>
+            <div class="latency-block">
+              <div>
+                <span>最近渲染</span>
+                <strong><b id="latency-value">—</b><small>ms</small></strong>
+              </div>
+              <div class="latency-spark" id="latency-spark" aria-hidden="true"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-label">性能 / 资源 <span>SESSION</span></div>
+            <div class="stat-grid">
+              <div><span>平均渲染</span><b id="avg-latency">— ms</b></div>
+              <div><span>P95 渲染</span><b id="p95-latency">— ms</b></div>
+              <div><span>绘制对象</span><b id="shape-stat">0</b></div>
+              <div><span>坐标点</span><b id="point-stat">0</b></div>
+              <div><span>位图缓冲</span><b id="bitmap-stat">0 MB</b></div>
+              <div><span>监听器</span><b id="listener-stat">0</b></div>
+            </div>
+            <div class="resource-meter" aria-hidden="true"><i id="resource-fill"></i></div>
+            <p class="resource-note" id="resource-note">GPU 内存按画布像素 × 4 字节估算。</p>
+          </section>
+
+          <section class="panel log-panel">
+            <div class="panel-label">
+              异常日志 <span id="log-count">0</span>
+              <button class="text-button" type="button" id="clear-log">清空</button>
+            </div>
+            <div class="recovery-tip" id="recovery-tip">
+              <span class="status-ok" aria-hidden="true"></span>
+              <p>状态正常。若手势失效，按 <kbd>Esc</kbd> 取消并点击“适合视图”。</p>
+            </div>
+            <ol class="error-log" id="error-log" data-testid="error-log" aria-live="polite"></ol>
+          </section>
+
+          <section class="panel tools-panel">
+            <div class="panel-label">数据与导出 <span>LOCAL</span></div>
+            <p class="save-state" id="save-state"><i></i>已保存到本机</p>
+            <div class="action-grid">
+              <button type="button" id="export-json">导出 JSON</button>
+              <button type="button" id="export-png">导出 PNG</button>
+              <button type="button" id="reset-scene">恢复示例</button>
+              <button type="button" id="clear-canvas">清空画布</button>
+            </div>
+            <p class="export-note">PNG 仅包含绘图内容，不包含准星、网格或诊断界面。</p>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="page-footer">
+        <span>POINTER EVENTS / UNIFIED INPUT</span>
+        <span>单指平移 · 双指缩放 · 长按选择</span>
+        <span>本地优先 · 异常可见 · 可恢复</span>
+      </footer>
+    </div>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Legacy Canvas Baseline</title>
+    <style>
+      @font-face {
+        font-family: "LegacyCJK";
+        src: url("../../assets/fonts/NotoSansSC-Regular-subset.ttf") format("truetype");
+        font-weight: 400;
+      }
+      body { margin: 0; padding: 18px; font-family: "LegacyCJK", sans-serif; background: #eeeae0; color: #222; }
+      header { margin-bottom: 12px; }
+      #status { font: 11px "LegacyCJK", monospace; color: #777; }
+      canvas { display: block; width: 100%; height: 520px; border: 1px solid #555; background: #faf8f1; touch-action: none; }
+      main { min-height: 1100px; }
+      .spacer { margin-top: 40px; color: #777; font: 12px "LegacyCJK", monospace; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>旧版画布基线</h1>
+        <div id="status">触屏与鼠标共用绘制指针 · 无手势隔离</div>
+      </header>
+      <canvas id="canvas"></canvas>
+      <div class="spacer">页面内容区：用于验证滚轮是否泄漏到页面。</div>
+    </main>
+    <script>
+      const STORAGE_KEY = "crosshair-canvas.scene.v1";
+      const errors = [];
+      const canvas = document.querySelector("#canvas");
+      const context = canvas.getContext("2d");
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const view = { x: 0, y: 0, scale: 1 };
+      let shapes = [];
+      let selected = null;
+      let drawing = null;
+      let clicks = 0;
+
+      window.addEventListener("error", (event) => {
+        errors.push({ code: "UNCAUGHT", message: event.message });
+      });
+
+      function seed() {
+        return [
+          {
+            id: "seed-orbit", color: "#e2573d", width: 5,
+            points: [
+              { x: 170, y: 250 }, { x: 230, y: 170 }, { x: 330, y: 150 },
+              { x: 410, y: 220 }, { x: 390, y: 320 }, { x: 280, y: 350 },
+              { x: 170, y: 250 }
+            ]
+          },
+          {
+            id: "seed-wave", color: "#2e6f68", width: 4,
+            points: [
+              { x: 150, y: 420 }, { x: 230, y: 390 }, { x: 300, y: 445 },
+              { x: 370, y: 405 }, { x: 450, y: 450 }
+            ]
+          }
+        ];
+      }
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        shapes = raw ? JSON.parse(raw).shapes : seed();
+      } catch (error) {
+        errors.push({ code: "JSON_PARSE_FAILED", message: error.message });
+        setTimeout(() => { throw error; }, 0);
+      }
+
+      function legacyLocalPoint(event) {
+        return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      }
+
+      function distanceToSegment(point, start, end) {
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        const length = dx * dx + dy * dy;
+        if (!length) return Math.hypot(point.x - start.x, point.y - start.y);
+        const t = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / length));
+        return Math.hypot(point.x - (start.x + t * dx), point.y - (start.y + t * dy));
+      }
+
+      function hitTest(point) {
+        for (let index = shapes.length - 1; index >= 0; index -= 1) {
+          const shape = shapes[index];
+          for (let item = 1; item < shape.points.length; item += 1) {
+            if (distanceToSegment(point, shape.points[item - 1], shape.points[item]) < 12) return shape;
+          }
+        }
+        return null;
+      }
+
+      function render() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#faf8f1";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        for (const shape of shapes) {
+          context.beginPath();
+          context.moveTo(shape.points[0].x, shape.points[0].y);
+          for (const point of shape.points.slice(1)) context.lineTo(point.x, point.y);
+          context.strokeStyle = shape.id === selected ? "#111" : shape.color;
+          context.lineWidth = shape.width + (shape.id === selected ? 4 : 0);
+          context.stroke();
+        }
+        context.strokeStyle = "red";
+        context.beginPath();
+        context.moveTo(canvas.width / 2 - 12, canvas.height / 2);
+        context.lineTo(canvas.width / 2 + 12, canvas.height / 2);
+        context.moveTo(canvas.width / 2, canvas.height / 2 - 12);
+        context.lineTo(canvas.width / 2, canvas.height / 2 + 12);
+        context.stroke();
+      }
+
+      canvas.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        try {
+          canvas.setPointerCapture(event.pointerId);
+        } catch {
+        }
+        const point = legacyLocalPoint(event);
+        if (event.button === 0) {
+          drawing = { id: event.pointerId, points: [point] };
+        }
+        selected = hitTest(point)?.id || null;
+        render();
+      });
+
+      canvas.addEventListener("pointermove", (event) => {
+        if (drawing?.id !== event.pointerId) return;
+        event.preventDefault();
+        drawing.points.push(legacyLocalPoint(event));
+        render();
+      });
+
+      canvas.addEventListener("pointerup", (event) => {
+        if (drawing?.id !== event.pointerId) return;
+        shapes.push({
+          id: `legacy-${shapes.length}`,
+          color: "#25324a",
+          width: 3,
+          points: drawing.points.length > 1 ? drawing.points : [...drawing.points, { ...drawing.points[0] }]
+        });
+        drawing = null;
+        clicks += 1;
+        render();
+      });
+
+      window.__baselineDebug = {
+        getState() {
+          const bounds = canvas.getBoundingClientRect();
+          return {
+            scene: { shapes, view },
+            rect: { width: bounds.width, height: bounds.height, left: bounds.left, top: bounds.top },
+            cachedRect: { width: rect.width, height: rect.height, left: rect.left, top: rect.top },
+            selected,
+            errors: errors.map((error) => ({ ...error })),
+            resources: {
+              shapes: shapes.length,
+              points: shapes.reduce((sum, shape) => sum + shape.points.length, 0),
+              listeners: 4,
+              bitmapBytes: canvas.width * canvas.height * 4,
+              canvasWidth: canvas.width,
+              canvasHeight: canvas.height
+            },
+            clicks
+          };
+        },
+        clearStorage() {
+          localStorage.clear();
+          shapes = seed();
+          render();
+        }
+      };
+
+      render();
+    </script>
+  </body>
+</html>

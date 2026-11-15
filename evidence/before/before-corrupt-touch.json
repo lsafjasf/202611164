@@ -1,0 +1,42 @@
+{
+  "scenario": "corrupt",
+  "project": "touch",
+  "repeatable": true,
+  "runs": [
+    {
+      "shapes": 0,
+      "points": 0,
+      "listeners": 4,
+      "bitmapBytes": 1839528,
+      "errors": [
+        {
+          "code": "JSON_PARSE_FAILED",
+          "message": "Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON"
+        },
+        {
+          "code": "UNCAUGHT",
+          "message": "Uncaught SyntaxError: Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON"
+        },
+        "Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON"
+      ]
+    },
+    {
+      "shapes": 0,
+      "points": 0,
+      "listeners": 4,
+      "bitmapBytes": 1839528,
+      "errors": [
+        {
+          "code": "JSON_PARSE_FAILED",
+          "message": "Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON"
+        },
+        {
+          "code": "UNCAUGHT",
+          "message": "Uncaught SyntaxError: Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON"
+        },
+        "Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON",
+        "Unexpected token 'N', ...\"\"x\":0,\"y\":NaN}]}\" is not valid JSON"
+      ]
+    }
+  ]
+}
