@@ -1,0 +1,17 @@
+{
+  "name": "lumen-relay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Accessible Canvas navigation game with deterministic checks",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node --test tests/game.test.mjs",
+    "test:e2e": "playwright test",
+    "test:all": "npm test && npm run test:e2e",
+    "report": "node scripts/write-report.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}
