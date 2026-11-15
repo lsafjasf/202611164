@@ -1,0 +1,15 @@
+{
+  "name": "loom-canvas-resource-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Long-running canvas editor with observable resource lifecycle and repeatable recovery tests",
+  "scripts": {
+    "start": "node scripts/server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "benchmark": "node scripts/benchmark.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

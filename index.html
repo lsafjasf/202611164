@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="具备资源生命周期观测、增量撤销与损坏输入恢复的长时运行画布编辑器"
+    />
+    <title>Loom Canvas · 长时画布工作台</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%236ee7b7'/%3E%3Cpath d='M10 8v16h12' stroke='%2306291e' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">L</span>
+          <div>
+            <strong>Loom Canvas</strong>
+            <span>long-running scene desk</span>
+          </div>
+        </div>
+        <div class="session-strip" aria-label="会话状态">
+          <span class="pill" id="sessionState">已打开</span>
+          <span
+            class="pill mode-pill"
+            id="modeBadge"
+            role="button"
+            tabindex="0"
+            title="点击切换低细节模式"
+            >完整渲染</span
+          >
+          <span class="measure">开放 <b id="elapsed">00:00</b></span>
+          <span class="measure">上次 <b id="lastOp">--</b></span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="undoButton" title="撤销 (Ctrl+Z)">↶</button>
+          <button class="icon-button" id="redoButton" title="重做 (Ctrl+Shift+Z)">↷</button>
+          <button class="button subtle" id="exportButton">导出 JSON</button>
+          <button class="button danger" id="toggleSessionButton">关闭画布</button>
+        </div>
+      </header>
+
+      <section class="recovery-banner" id="recoveryBanner" aria-live="polite">
+        <span class="signal" id="recoverySignal" aria-hidden="true"></span>
+        <strong>恢复建议</strong>
+        <span id="recoveryText">资源状态正常。导入损坏数据会原子拒绝，当前画布保持不变。</span>
+        <button class="text-button" id="diagnosticsJump">查看诊断</button>
+      </section>
+
+      <main class="workspace">
+        <nav class="toolrail" aria-label="绘图工具">
+          <button class="tool active" data-tool="select" title="选择 (V)">
+            <span>⌁</span><small>选择</small>
+          </button>
+          <button class="tool" data-tool="rect" title="矩形 (R)">
+            <span>▭</span><small>矩形</small>
+          </button>
+          <button class="tool" data-tool="ellipse" title="椭圆 (E)">
+            <span>◯</span><small>椭圆</small>
+          </button>
+          <button class="tool" data-tool="text" title="文本 (T)">
+            <span>T</span><small>文本</small>
+          </button>
+          <span class="tool-divider"></span>
+          <button class="tool" id="deleteButton" title="删除所选 (Delete)">
+            <span>⌫</span><small>删除</small>
+          </button>
+        </nav>
+
+        <section class="stage-panel" aria-label="画布">
+          <div class="stage-heading">
+            <div>
+              <span class="eyebrow">SCENE VIEW</span>
+              <h1>无标题画布 <span id="documentSize">1200 × 760</span></h1>
+            </div>
+            <div class="legend">
+              <span><i class="dot selection-dot"></i>选择</span>
+              <span><i class="dot cache-dot"></i>缓存对象</span>
+            </div>
+          </div>
+          <div class="canvas-shell" id="canvasShell">
+            <canvas id="stageCanvas" aria-label="可编辑画布"></canvas>
+            <canvas id="overlayCanvas" class="overlay" aria-hidden="true"></canvas>
+            <div class="canvas-hint" id="canvasHint">选择工具后拖动；R / E / T 创建对象</div>
+            <div class="empty-state" id="emptyState" hidden>
+              <span>画布为空</span>
+              <small>使用左侧工具创建对象，或导入场景</small>
+            </div>
+          </div>
+          <footer class="stage-footer">
+            <span id="fpsValue">60 FPS</span>
+            <span id="autoModeNote">非关键网格与阴影按性能自动降级，导出内容不变</span>
+            <span id="zoomValue">适应画布</span>
+          </footer>
+        </section>
+
+        <aside class="inspector">
+          <section class="panel metrics-panel">
+            <div class="panel-title">
+              <div>
+                <span class="eyebrow">LIVE TELEMETRY</span>
+                <h2>资源概况</h2>
+              </div>
+              <span class="live-indicator">LIVE</span>
+            </div>
+            <div class="metric-grid">
+              <article>
+                <span>活动对象</span>
+                <strong id="activeObjects">0</strong>
+                <small id="selectedInfo">0 个选中</small>
+              </article>
+              <article>
+                <span>预览缓存</span>
+                <strong id="cacheEntries">0</strong>
+                <small id="cacheSize">0 KB</small>
+              </article>
+              <article class="wide">
+                <span>内存估算</span>
+                <strong id="memoryEstimate">0 KB</strong>
+                <small id="memoryBreakdown">画布 0 · 模型 0 · 撤销 0</small>
+              </article>
+              <article>
+                <span>离屏画布</span>
+                <strong id="canvasCount">0</strong>
+                <small>关闭后应归零</small>
+              </article>
+              <article>
+                <span>事件监听</span>
+                <strong id="listenerCount">0</strong>
+                <small>随会话释放</small>
+              </article>
+            </div>
+            <div class="meter">
+              <div class="meter-label">
+                <span>撤销增量占用</span>
+                <b id="historyLabel">0 项 · 0 KB</b>
+              </div>
+              <div class="meter-track"><i id="historyMeter"></i></div>
+            </div>
+            <div class="mini-stats">
+              <span>缓存命中 <b id="cacheHitRate">--</b></span>
+              <span>错误记录 <b id="errorCount">0</b></span>
+              <span>模式耗时 <b id="operationTime">--</b></span>
+            </div>
+            <button class="button full-width" id="stressButton">运行 20 轮打开/关闭测试</button>
+          </section>
+
+          <section class="panel layers-panel">
+            <div class="panel-title compact">
+              <div>
+                <span class="eyebrow">SCENE OBJECTS</span>
+                <h2>活动对象 <span id="layerCount">0</span></h2>
+              </div>
+              <button class="text-button" id="clearSelectionButton">取消选择</button>
+            </div>
+            <div class="layer-list" id="layerList"></div>
+          </section>
+
+          <section class="panel input-panel">
+            <div class="panel-title compact">
+              <div>
+                <span class="eyebrow">INPUT LAB</span>
+                <h2>输入与恢复</h2>
+              </div>
+            </div>
+            <div class="scenario-grid">
+              <button class="scenario normal" data-scenario="normal">正常输入</button>
+              <button class="scenario boundary" data-scenario="boundary">边界输入</button>
+              <button class="scenario corrupt" data-scenario="corrupt">损坏输入</button>
+            </div>
+            <label class="json-label" for="jsonInput">自定义 JSON</label>
+            <textarea id="jsonInput" spellcheck="false" placeholder='{"version":1,"width":1200,...}'></textarea>
+            <div class="input-actions">
+              <button class="button subtle small" id="loadJsonButton">导入文本</button>
+              <button class="text-button" id="loadCurrentButton">填入当前场景</button>
+            </div>
+          </section>
+
+          <section class="panel diagnostics-panel" id="diagnosticsPanel">
+            <div class="panel-title compact">
+              <div>
+                <span class="eyebrow">FAILURE JOURNAL</span>
+                <h2>异常日志</h2>
+              </div>
+              <button class="text-button" id="clearErrorsButton">清空视图</button>
+            </div>
+            <div class="error-list" id="errorList">
+              <p class="quiet">暂无异常。失败输入会在这里留下可复现记录。</p>
+            </div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="statusbar">
+        <span><i class="status-light"></i><b id="statusText">编辑就绪</b></span>
+        <span id="resourceNote">关闭会释放画布、监听器与缓存，保留对象和增量撤销</span>
+        <span id="lastCloseNote">尚未执行关闭测试</span>
+      </footer>
+    </div>
+    <div class="toast-stack" id="toastStack" aria-live="assertive"></div>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
