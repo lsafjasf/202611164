@@ -1,0 +1,77 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", "PingFang SC", sans-serif;
+  background: #10131a;
+  color: #dde3ee;
+}
+header {
+  padding: 10px 16px;
+  background: #171c26;
+  border-bottom: 1px solid #2a3242;
+}
+header h1 { font-size: 18px; margin: 0 0 8px; }
+.transport {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+button {
+  background: #2b3648;
+  color: #dde3ee;
+  border: 1px solid #3c4a63;
+  border-radius: 6px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+button:hover { background: #374560; }
+#status { color: #8fd18a; font-size: 12px; }
+main {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  align-items: flex-start;
+}
+.canvas-wrap { display: flex; flex-direction: column; gap: 10px; }
+canvas {
+  background: #0b0e14;
+  border: 1px solid #2a3242;
+  border-radius: 8px;
+}
+aside {
+  flex: 1;
+  min-width: 320px;
+  font-size: 13px;
+}
+aside h2 { font-size: 14px; margin: 12px 0 6px; color: #9fb4d8; }
+aside label { display: block; margin: 4px 0; }
+.voice {
+  border: 1px solid #2a3242;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  background: #151a24;
+}
+.voice h3 { margin: 0 0 6px; font-size: 13px; }
+.voice .steps { display: flex; gap: 3px; margin-top: 6px; }
+.voice .steps button {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border-radius: 4px;
+  background: #232b3a;
+  border: 1px solid #33405a;
+}
+.voice .steps button.on { background: #4f8fdd; border-color: #6fa8ec; }
+.voice .steps button.playing { outline: 2px solid #ffd166; }
+pre#compareOut {
+  background: #0b0e14;
+  border: 1px solid #2a3242;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
