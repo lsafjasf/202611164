@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="没有地图的声学事故调查：用 Web Audio 合成线索，还原六段事故时间线。"
+    />
+    <meta name="theme-color" content="#101719" />
+    <title>声序 ECHO / SEQUENCE</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-grain" aria-hidden="true"></div>
+    <div class="page-glow" aria-hidden="true"></div>
+
+    <div class="app-shell">
+      <header class="topbar" id="topbar" hidden>
+        <a class="brand-lockup" href="./" aria-label="返回案件入口">
+          <span class="brand-mark">声序</span>
+          <span class="brand-rule"></span>
+          <span class="brand-en">ECHO / SEQUENCE</span>
+        </a>
+        <div class="case-stamp">
+          <span class="micro-label">CASE FILE</span>
+          <strong id="caseNumber">—</strong>
+          <span class="seed-stamp" id="seedStamp">SEED —</span>
+        </div>
+        <div class="topbar-actions">
+          <span class="phase-indicator" id="phaseIndicator">
+            <span class="phase-dot"></span>
+            <span>调查进行中</span>
+          </span>
+          <button class="button button-ghost button-small" id="restartSameTop" type="button">
+            同 seed 重开
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="screen briefing-screen" id="briefingScreen">
+          <div class="briefing-copy">
+            <p class="kicker"><span>01</span> ACOUSTIC RECONSTRUCTION UNIT</p>
+            <h1 class="title">
+              声序
+              <span>ECHO / SEQUENCE</span>
+            </h1>
+            <p class="lede">
+              没有地图。只有六段被重新排序的现场声证。<br />
+              用方位、距离与片尾序位脉冲，把事故复原成一条时间线。
+            </p>
+
+            <form class="seed-form" id="seedForm">
+              <label for="seedInput">
+                <span class="micro-label">案件 SEED</span>
+                <span class="label-note">相同 seed 会生成完全相同的线索与规则</span>
+              </label>
+              <div class="seed-entry">
+                <span class="prompt-mark">&gt;</span>
+                <input
+                  id="seedInput"
+                  name="seed"
+                  type="text"
+                  value="ECHO-0417"
+                  maxlength="32"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-describedby="seedHint"
+                />
+                <button class="button button-primary" id="startButton" type="submit">
+                  <span>开始调查</span>
+                  <span class="button-arrow" aria-hidden="true">↗</span>
+                </button>
+              </div>
+              <p class="field-hint" id="seedHint">
+                浏览器将实时合成音频。建议佩戴耳机，并保持系统音量适中。
+              </p>
+            </form>
+          </div>
+
+          <aside class="briefing-panel">
+            <div class="panel-index">DECK / 06</div>
+            <div class="signal-illustration" aria-hidden="true">
+              <span style="--i: 0"></span><span style="--i: 1"></span>
+              <span style="--i: 2"></span><span style="--i: 3"></span>
+              <span style="--i: 4"></span><span style="--i: 5"></span>
+              <span style="--i: 6"></span><span style="--i: 7"></span>
+              <span style="--i: 8"></span><span style="--i: 9"></span>
+              <span style="--i: 10"></span><span style="--i: 11"></span>
+              <span style="--i: 12"></span><span style="--i: 13"></span>
+              <span style="--i: 14"></span><span style="--i: 15"></span>
+              <span style="--i: 16"></span><span style="--i: 17"></span>
+              <span style="--i: 18"></span><span style="--i: 19"></span>
+              <span style="--i: 20"></span><span style="--i: 21"></span>
+              <span style="--i: 22"></span><span style="--i: 23"></span>
+            </div>
+            <div class="protocol-list">
+              <div class="protocol-row">
+                <span>声证</span><strong>06</strong><small>已重排</small>
+              </div>
+              <div class="protocol-row">
+                <span>检查机会</span><strong>03</strong><small>错误扣减</small>
+              </div>
+              <div class="protocol-row">
+                <span>地图</span><strong>—</strong><small>不使用</small>
+              </div>
+            </div>
+            <p class="panel-footnote">
+              方位由声像与频响明暗编码；距离由直达声/混响比编码；原序由片尾声标脉冲数编码。
+            </p>
+          </aside>
+        </section>
+
+        <section class="screen investigation-screen" id="investigationScreen" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="kicker"><span>02</span> LISTENING ROOM</p>
+              <h2>事故声场重构</h2>
+            </div>
+            <p class="heading-copy">
+              逐段监听，记录方位与距离。片尾脉冲数即原序位。标记错误会消耗一次检查机会。
+            </p>
+            <button class="text-button" id="legendToggle" type="button" aria-expanded="false">
+              打开声学判读卡 <span>＋</span>
+            </button>
+          </div>
+
+          <aside class="legend-panel" id="legendPanel" hidden>
+            <div><span class="legend-key">PAN</span><strong>左右</strong><p>声像偏向哪一侧，即声源位于哪一侧。</p></div>
+            <div><span class="legend-key">TONE</span><strong>前后</strong><p>前侧声标更明亮、音高更高；后侧更闷、更低。</p></div>
+            <div><span class="legend-key">TAIL</span><strong>远近</strong><p>直达声越弱、回声间隔与混响尾音越长，距离越远。</p></div>
+            <div><span class="legend-key">PIPS</span><strong>原序</strong><p>每段末尾的短脉冲数量，等于该事件在原时间线中的序位。</p></div>
+          </aside>
+
+          <div class="workspace">
+            <section class="listen-panel" aria-labelledby="listenTitle">
+              <div class="panel-heading">
+                <div>
+                  <span class="micro-label">EVIDENCE DECK</span>
+                  <h3 id="listenTitle">六段待判声证</h3>
+                </div>
+                <div class="headphone-note">
+                  <span class="headphone-icon" aria-hidden="true">◖</span>
+                  <span>STEREO / 建议佩戴耳机</span>
+                </div>
+              </div>
+              <div class="evidence-grid" id="evidenceGrid"></div>
+            </section>
+
+            <aside class="inference-panel" aria-labelledby="inferenceTitle">
+              <div class="inference-head">
+                <div>
+                  <span class="micro-label">INFERENCE SHEET</span>
+                  <h3 id="inferenceTitle">推断表</h3>
+                </div>
+                <div class="checks-budget" id="checksBudget">
+                  <span class="micro-label">检查机会</span>
+                  <div class="check-tokens" id="checkTokens" aria-label="剩余 3 次检查机会"></div>
+                </div>
+              </div>
+              <p class="inference-help">
+                为每段声证填写原序位、方位与距离。原序位不可重复；错误检查扣 1 次。
+              </p>
+              <form id="inferenceForm" novalidate>
+                <div class="inference-table-wrap">
+                  <table class="inference-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">声证</th>
+                        <th scope="col">原序</th>
+                        <th scope="col">方位</th>
+                        <th scope="col">距离</th>
+                        <th scope="col"><span class="sr-only">检查</span></th>
+                      </tr>
+                    </thead>
+                    <tbody id="inferenceBody"></tbody>
+                  </table>
+                </div>
+                <div class="check-message" id="checkMessage" hidden role="status"></div>
+                <div class="submit-zone">
+                  <div class="completion-meter">
+                    <div class="completion-label">
+                      <span>判读完成度</span>
+                      <strong id="completionText">0 / 18</strong>
+                    </div>
+                    <div class="meter-track"><span id="completionBar"></span></div>
+                  </div>
+                  <button class="button button-submit" id="submitButton" type="submit" disabled>
+                    提交结论 <span class="button-arrow">↗</span>
+                  </button>
+                  <p class="submit-note" id="submitNote">提交前不会揭示真实参数</p>
+                </div>
+              </form>
+            </aside>
+          </div>
+
+          <div class="transport" id="transport">
+            <div class="transport-id">
+              <span class="transport-signal" aria-hidden="true"></span>
+              <div>
+                <span class="micro-label">NOW MONITORING</span>
+                <strong id="activeClueLabel">声证 α</strong>
+              </div>
+            </div>
+            <button class="round-button" id="playPauseButton" type="button" aria-label="播放当前声证">
+              <span class="play-shape" aria-hidden="true"></span>
+            </button>
+            <div class="transport-timeline">
+              <div class="transport-times">
+                <span id="currentTime">00:00.00</span>
+                <span id="durationTime">00:04.80</span>
+              </div>
+              <div class="transport-track" id="transportTrack">
+                <span id="transportProgress"></span>
+              </div>
+            </div>
+            <button class="button button-ghost button-small" id="pauseButton" type="button" disabled>
+              暂停
+            </button>
+            <button class="button button-ghost button-small" id="replayButton" type="button">
+              重播
+            </button>
+          </div>
+        </section>
+
+        <section class="screen result-screen" id="resultScreen" hidden>
+          <div class="result-hero">
+            <div>
+              <p class="kicker"><span>03</span> FINDINGS / 调查结论</p>
+              <h2 id="verdictTitle">结论已封存</h2>
+              <p class="verdict-copy" id="verdictCopy"></p>
+            </div>
+            <div class="verdict-seal" id="verdictSeal" aria-hidden="true">
+              <span>RESULT</span>
+              <strong id="verdictScore">0 / 6</strong>
+              <small>ROWS VERIFIED</small>
+            </div>
+          </div>
+
+          <div class="result-metrics" id="resultMetrics"></div>
+
+          <section class="comparison-panel" aria-labelledby="comparisonTitle">
+            <div class="panel-heading comparison-heading">
+              <div>
+                <span class="micro-label">JUDGEMENT / GROUND TRUTH</span>
+                <h3 id="comparisonTitle">判断与真实声场参数对照</h3>
+              </div>
+              <p>每一项判断均与对应声源、时间及频段并列。</p>
+            </div>
+            <div class="comparison-table-wrap">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th scope="col">声证 / 事件</th>
+                    <th scope="col">原序位</th>
+                    <th scope="col">方位</th>
+                    <th scope="col">距离</th>
+                    <th scope="col">对应声源</th>
+                    <th scope="col">真实时间</th>
+                    <th scope="col">主导频段</th>
+                  </tr>
+                </thead>
+                <tbody id="comparisonBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <div class="result-actions">
+            <div>
+              <span class="micro-label">SEED LOCK</span>
+              <strong id="resultSeed">—</strong>
+              <p>同一 seed 的声证顺序、合成内容与错误惩罚保持不变。</p>
+            </div>
+            <button class="button button-primary" id="restartSameBottom" type="button">
+              同 seed 重开 <span class="button-arrow">↻</span>
+            </button>
+            <a class="button button-ghost" href="./">换一个 seed</a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>ECHO / SEQUENCE · ACOUSTIC FORENSICS</span>
+        <span>NO MAP · NO PRERECORDED AUDIO · WEB AUDIO SYNTHESIS</span>
+      </footer>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay" hidden>
+      <div class="loading-panel" role="status" aria-live="polite">
+        <span class="micro-label">SYNTHESIS IN PROGRESS</span>
+        <h2>正在合成现场声证</h2>
+        <p id="loadingText">准备 Web Audio 渲染器…</p>
+        <div class="synthesis-meter"><span id="synthesisBar"></span></div>
+        <div class="synthesis-dots" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
