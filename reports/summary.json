@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-11-15T23:08:55.205Z",
+  "unit": {
+    "total": 17,
+    "passed": 17,
+    "failed": 0,
+    "rate": "100.0%"
+  },
+  "e2e": {
+    "total": 17,
+    "passed": 17,
+    "failed": 0,
+    "rate": "100.0%"
+  },
+  "overall": {
+    "total": 34,
+    "passed": 34,
+    "failed": 0,
+    "rate": "100.0%"
+  }
+}

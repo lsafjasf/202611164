@@ -1,0 +1,129 @@
+{
+  "suite": "unit",
+  "generatedAt": "2026-11-15T23:08:50.514Z",
+  "total": 17,
+  "passed": 17,
+  "failed": 0,
+  "rate": "100.0%",
+  "results": [
+    {
+      "group": "default",
+      "name": "默认工程通过校验且对象数正确",
+      "ok": true,
+      "durationMs": 2,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "关键帧插值在中间时刻命中目标值",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "导出-导入往返后哈希与对象数完全一致",
+      "ok": true,
+      "durationMs": 5,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "三次往返不累积重复对象且哈希稳定",
+      "ok": true,
+      "durationMs": 2,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "导出动作不修改工程状态（保留导出前快照）",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "导出包含规范 counts 字段",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "边界工程（极值坐标/时长/帧率）通过校验",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "越界数值与非法帧率被拒绝",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "关键帧时间超出时间轴被拒绝",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "localStorage 持久化后重新载入恢复完整工程与选择",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "损坏的 localStorage 数据回退到新工程而不抛异常",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "悬空素材引用阻止导入并保持原工程",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "非法图层类型与非法缓动被报告",
+      "ok": true,
+      "durationMs": 1,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "重复对象 id 被拒绝",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "JSON 语法错误返回结构化错误且不改动工程",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "悬空选择引用阻止导入",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "错误恢复：失败后可继续导入合法工程",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    }
+  ]
+}

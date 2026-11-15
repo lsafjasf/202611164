@@ -1,0 +1,16 @@
+{
+  "name": "json-layer-editor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "支持 JSON 导出/导入、关键帧时间轴与 Canvas 预览的无障碍图层编辑器",
+  "scripts": {
+    "test:unit": "node test/run-unit.js",
+    "test:e2e": "node test/run-e2e.js",
+    "test": "npm run test:unit && npm run test:e2e",
+    "serve": "node test/serve-only.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

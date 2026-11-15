@@ -1,0 +1,129 @@
+{
+  "suite": "e2e",
+  "generatedAt": "2026-11-15T23:08:55.204Z",
+  "total": 17,
+  "passed": 17,
+  "failed": 0,
+  "rate": "100.0%",
+  "results": [
+    {
+      "group": "default",
+      "name": "默认工程载入后渲染 3 个图层并显示对象数与哈希",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "鼠标点击画布可选中图层（鼠标路径）",
+      "ok": true,
+      "durationMs": 17,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "键盘方向键可切换图层选择（键盘路径）",
+      "ok": true,
+      "durationMs": 24,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "触屏点按与鼠标到达同一选中状态（触屏路径）",
+      "ok": true,
+      "durationMs": 56,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "键盘修改时间轴并插入关键帧后画布像素发生变化",
+      "ok": true,
+      "durationMs": 55,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "导出 JSON 后再导入，哈希/对象数/画布像素完全一致",
+      "ok": true,
+      "durationMs": 99,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "多次往返不产生重复图层/关键帧/素材",
+      "ok": true,
+      "durationMs": 25,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "刷新页面后工程、选择与播放头从 localStorage 完整恢复",
+      "ok": true,
+      "durationMs": 1193,
+      "error": null
+    },
+    {
+      "group": "boundary",
+      "name": "边界工程载入后仍可渲染并保留极值参数",
+      "ok": true,
+      "durationMs": 157,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "悬空引用导入被阻止并显示具体失败原因，工程不被替换",
+      "ok": true,
+      "durationMs": 148,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "错误恢复后可重新导入合法工程且状态恢复",
+      "ok": true,
+      "durationMs": 151,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "非法类型 JSON 被拒绝且状态条展示错误码与路径",
+      "ok": true,
+      "durationMs": 4,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "控制台无未捕获脚本错误",
+      "ok": true,
+      "durationMs": 0,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "无障碍：列表/画布/状态条具备 ARIA 角色与标签",
+      "ok": true,
+      "durationMs": 11,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "无障碍：键盘可完成选择、改参数、插关键帧的完整路径",
+      "ok": true,
+      "durationMs": 261,
+      "error": null
+    },
+    {
+      "group": "default",
+      "name": "无障碍：焦点指示器可见且焦点停留在可交互元素上",
+      "ok": true,
+      "durationMs": 14,
+      "error": null
+    },
+    {
+      "group": "error",
+      "name": "无障碍：导入失败时 alert 区域携带错误码并可被读屏感知",
+      "ok": true,
+      "durationMs": 87,
+      "error": null
+    }
+  ]
+}

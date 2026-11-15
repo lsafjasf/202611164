@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSON 图层编辑器</title>
+  <link rel="stylesheet" href="src/ui/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>JSON 图层编辑器</h1>
+    <div class="toolbar" role="toolbar" aria-label="工程操作">
+      <button id="btn-new" type="button">载入默认工程</button>
+      <button id="btn-boundary" type="button">载入边界工程</button>
+      <button id="btn-export" type="button">导出 JSON</button>
+      <button id="btn-import" type="button">导入 JSON</button>
+      <button id="btn-undo" type="button" aria-keyshortcuts="Control+Z">撤销</button>
+      <button id="btn-redo" type="button" aria-keyshortcuts="Control+Y">重做</button>
+      <input id="file-import" type="file" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel" aria-labelledby="layers-heading">
+      <h2 id="layers-heading">图层</h2>
+      <ul id="layer-list" class="layer-list" role="listbox" aria-label="图层列表" tabindex="0"></ul>
+      <button id="btn-add-rect" type="button">添加矩形图层</button>
+      <button id="btn-add-text" type="button">添加文字图层</button>
+      <h2>图层参数</h2>
+      <form id="layer-form" class="layer-form" aria-label="图层参数表单">
+        <label>名称 <input name="name" type="text" aria-label="图层名称"></label>
+        <label>X <input name="x" type="number" step="1" aria-label="图层 X 坐标"></label>
+        <label>Y <input name="y" type="number" step="1" aria-label="图层 Y 坐标"></label>
+        <label>宽 <input name="width" type="number" min="0" step="1" aria-label="图层宽度"></label>
+        <label>高 <input name="height" type="number" min="0" step="1" aria-label="图层高度"></label>
+        <label>不透明度 <input name="opacity" type="number" min="0" max="1" step="0.05" aria-label="图层不透明度"></label>
+        <label>旋转 <input name="rotation" type="number" min="-360" max="360" step="1" aria-label="图层旋转角度"></label>
+        <label>填充色 <input name="fill" type="color" aria-label="图层填充色"></label>
+        <button id="btn-keyframe" type="button">在当前时间插入关键帧</button>
+      </form>
+    </aside>
+
+    <section class="panel canvas-panel" aria-labelledby="canvas-heading">
+      <h2 id="canvas-heading">Canvas 预览</h2>
+      <div class="canvas-wrap">
+        <canvas id="canvas" width="480" height="320" role="img"
+          aria-label="工程画布预览，支持鼠标点击、触屏点按和方向键选择图层"></canvas>
+      </div>
+      <div class="timeline" aria-labelledby="timeline-heading">
+        <h2 id="timeline-heading">时间轴</h2>
+        <input id="time-range" type="range" min="0" max="5" step="0.01" value="0"
+          aria-label="播放头时间（秒）">
+        <span id="time-label" aria-live="off">0.00s / 5.00s</span>
+        <ol id="keyframe-list" class="keyframe-list" aria-label="选中图层的关键帧"></ol>
+      </div>
+    </section>
+
+    <aside class="panel" aria-labelledby="assets-heading">
+      <h2 id="assets-heading">素材参数</h2>
+      <ul id="asset-list" class="asset-list" aria-label="素材列表"></ul>
+      <h2>工程指标</h2>
+      <dl id="metrics" class="metrics">
+        <dt>对象数</dt><dd id="metric-count">-</dd>
+        <dt>哈希 SHA-256</dt><dd id="metric-hash" class="hash">-</dd>
+        <dt>画布像素哈希</dt><dd id="metric-pixel-hash" class="hash">-</dd>
+      </dl>
+      <h2>状态与错误</h2>
+      <div id="status" role="status" aria-live="polite" class="status">就绪</div>
+      <div id="error-box" role="alert" aria-live="assertive" class="error-box" hidden></div>
+      <pre id="export-preview" class="export-preview" aria-label="导出 JSON 预览"></pre>
+    </aside>
+  </main>
+
+  <script type="module" src="src/ui/app.js"></script>
+</body>
+</html>
