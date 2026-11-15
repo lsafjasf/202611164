@@ -1,0 +1,73 @@
+:root {
+  --bg: #0d1b2a;
+  --panel: #14273c;
+  --ink: #e8eef5;
+  --muted: #8fa3b8;
+  --accent: #f4a259;
+  --ok: #7bd88f;
+  --bad: #ff6b6b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: linear-gradient(180deg, #0a1522, var(--bg));
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 24px 16px 64px;
+}
+header { max-width: 880px; margin: 0 auto 16px; }
+h1 { margin: 0 0 4px; font-size: 26px; }
+.sub { color: var(--muted); margin: 0; }
+.panel {
+  max-width: 880px;
+  margin: 14px auto;
+  background: var(--panel);
+  border: 1px solid #23405e;
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.hidden { display: none; }
+.muted { color: var(--muted); font-size: 13px; margin-left: 10px; }
+.hl { color: var(--accent); font-weight: 600; }
+button {
+  background: var(--accent);
+  border: none;
+  color: #1a1005;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 4px 6px 4px 0;
+}
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+input, select {
+  background: #0d1b2a;
+  color: var(--ink);
+  border: 1px solid #2d4a68;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+.seg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.seg-card {
+  background: #0f2033;
+  border: 1px solid #2d4a68;
+  border-radius: 8px;
+  padding: 12px;
+}
+.seg-card h3 { margin: 0 0 8px; font-size: 16px; }
+.seg-card .tag { font-size: 12px; color: var(--accent); }
+.transport { margin-top: 12px; }
+.order-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.order-row label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.dir-block { margin: 8px 0; }
+.feedback { margin-top: 10px; }
+.feedback p { margin: 6px 0; padding: 8px 10px; border-radius: 6px; background: #3a1f28; color: var(--bad); }
+.feedback p.ok { background: #16351f; color: var(--ok); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { border: 1px solid #2d4a68; padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: #0f2033; }
+.ok { color: var(--ok); }
+.bad { color: var(--bad); }
+#routeLine { margin: 8px 0 14px; font-size: 15px; }
+#scoreLine { margin-top: 12px; font-weight: 700; }

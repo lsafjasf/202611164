@@ -1,0 +1,10 @@
+{
+  "name": "harbor-sound-case",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node test/logic.test.mjs",
+    "test:e2e": "node test/e2e.test.mjs"
+  }
+}

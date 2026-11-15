@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>港口声纹推理 · 货柜追踪</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>⚓ 港口声纹推理</h1>
+    <p class="sub">监听四段港口广播，从汽笛、脚步与机械声中推断货柜被运走的顺序与关键方位。</p>
+  </header>
+
+  <section id="setup" class="panel">
+    <label>案件 Seed：
+      <input id="seedInput" type="number" value="20261116" />
+    </label>
+    <button id="startBtn">开始案件</button>
+    <button id="restartBtn" disabled>同 Seed 重开</button>
+    <span id="ruleInfo" class="muted"></span>
+  </section>
+
+  <section id="briefing" class="panel hidden">
+    <h2>调查须知</h2>
+    <ul>
+      <li>每段广播约 9 秒，含汽笛（频段各异）、脚步、起重机械与<span class="hl">港口钟声</span>。</li>
+      <li><span class="hl">钟声敲击次数 = 该货柜被运走的次序</span>（时间锚点）。</li>
+      <li>汽笛与机械声的<span class="hl">左右声道</span>即声源方位；其中两段广播需判定方位。</li>
+      <li>全部 4 个顺序 + 2 处方位正确才结案；重播与暂停不会改变线索内容。</li>
+    </ul>
+  </section>
+
+  <section id="player" class="panel hidden">
+    <h2>证物广播</h2>
+    <div id="segments" class="seg-grid"></div>
+    <div class="transport">
+      <button id="pauseBtn" disabled>⏸ 暂停</button>
+      <span id="nowPlaying" class="muted">未播放</span>
+    </div>
+  </section>
+
+  <section id="deduction" class="panel hidden">
+    <h2>提交推断</h2>
+    <div class="order-row" id="orderRow"></div>
+    <div id="directionRow"></div>
+    <button id="submitBtn">提交结论</button>
+    <span id="attemptsInfo" class="muted"></span>
+    <div id="feedback" class="feedback"></div>
+  </section>
+
+  <section id="settlement" class="panel hidden">
+    <h2 id="settleTitle">结案报告</h2>
+    <div id="routeLine"></div>
+    <table id="settleTable">
+      <thead>
+        <tr>
+          <th>广播</th><th>声源参数</th><th>时间锚点</th><th>频段</th>
+          <th>真实方位</th><th>真实顺序</th><th>你的推断</th><th>判定</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="scoreLine"></div>
+  </section>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
