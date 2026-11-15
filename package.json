@@ -1,0 +1,14 @@
+{
+  "name": "glass-harmonica",
+  "version": "1.0.0",
+  "description": "八只玻璃杯组成的可演奏乐器：鼠标/键盘触发、温升失谐、破裂、十二音旋律与工程存取",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/",
+    "serve": "node serve.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>八杯玻璃琴 · Glass Harmonica</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>八杯玻璃琴</h1>
+      <p class="hint">鼠标悬停移动 = 摩擦升温失谐 · 点击 = 敲击 · 按键 <kbd>A</kbd>–<kbd>K</kbd> = 敲击 1–8 号杯（按住更久力度更强）· 力度超阈值会破裂</p>
+    </header>
+
+    <section class="transport">
+      <button id="btn-play" class="primary">▶ 播放</button>
+      <button id="btn-pause">⏸ 暂停</button>
+      <button id="btn-stop">■ 停止</button>
+      <label>循环 <input type="checkbox" id="chk-loop" /></label>
+      <label>速度 <input type="range" id="rng-tempo" min="30" max="300" value="100" />
+        <span id="val-tempo">100 BPM</span></label>
+      <label>变调 <input type="range" id="rng-transpose" min="-12" max="12" value="0" />
+        <span id="val-transpose">0 st</span></label>
+      <span id="beat-readout" class="readout">节拍 0.00 / 6.00</span>
+      <span id="state-badge" class="badge idle">已停止</span>
+    </section>
+
+    <canvas id="stage" width="960" height="320" aria-label="玻璃杯可视化"></canvas>
+
+    <section id="track-panel" class="tracks"></section>
+
+    <section class="project-bar">
+      <button id="btn-save">💾 保存工程</button>
+      <button id="btn-save-file">⬇ 导出工程文件</button>
+      <button id="btn-load-file">⬆ 载入工程文件</button>
+      <input type="file" id="file-input" accept="application/json" hidden />
+      <button id="btn-export-wav">🎵 导出 WAV</button>
+      <button id="btn-repair">🔧 修复全部杯子</button>
+      <button id="btn-cool">❄ 冷却清零</button>
+    </section>
+
+    <section id="result" class="result hidden"></section>
+
+    <section id="verify-report" class="verify hidden"></section>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
