@@ -1,0 +1,10 @@
+{
+  "name": "keyboard-accessible-canvas-editor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "画布 + 弹窗 + 工具面板的键盘可达编辑器，含可观测指标与错误恢复",
+  "scripts": {
+    "test": "node test/scenarios.js",
+    "start": "python3 -m http.server 8000"
+  }
+}

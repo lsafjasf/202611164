@@ -1,0 +1,168 @@
+:root {
+  --focus-ring: #0b5fff;
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --text: #1c1e21;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* 可见焦点：所有可交互元素统一高对比焦点框 */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.app-header {
+  padding: 8px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid #ddd;
+}
+
+.app-header h1 { font-size: 18px; margin: 0 0 6px; }
+
+#status-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+#status-bar .suggestion {
+  color: #8a4b00;
+  background: #fff4e0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.app-body {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+}
+
+.tool-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.tool-panel h2 { font-size: 14px; margin: 0 0 4px; }
+
+.tool-panel button {
+  padding: 8px 10px;
+  text-align: left;
+  border: 1px solid #c8c8c8;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  /* 非关键动画细节：仅在未要求减少动态时启用 */
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.tool-panel button[aria-pressed="true"] {
+  background: #e3ecff;
+  border-color: var(--focus-ring);
+}
+
+.tool-panel button:hover { background: #f0f4ff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-panel button { transition: none; }
+}
+
+.canvas-area { flex: 1; }
+
+#canvas {
+  display: block;
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
+#canvas:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.hint { font-size: 12px; color: #555; }
+
+.demo-field {
+  display: block;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.demo-field input {
+  display: block;
+  width: 320px;
+  margin-top: 4px;
+  padding: 6px 8px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #fff;
+  padding: 20px 24px;
+  border-radius: 10px;
+  min-width: 320px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.modal h2 { margin-top: 0; font-size: 16px; }
+
+.modal label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.modal input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 8px;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.dialog-actions button {
+  padding: 6px 14px;
+  border: 1px solid #c8c8c8;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dialog-actions button[type="submit"] {
+  background: var(--focus-ring);
+  border-color: var(--focus-ring);
+  color: #fff;
+}

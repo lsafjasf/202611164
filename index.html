@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>键盘可达画布编辑器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>画布编辑器</h1>
+    <div id="status-bar" role="status" aria-live="polite">
+      <span id="status-mode">模式：选择</span>
+      <span id="status-timing">耗时：0.0 ms</span>
+      <span id="status-resources">资源：图形 0 / 撤销 0 / 错误 0</span>
+      <span id="status-suggestion" class="suggestion" hidden></span>
+    </div>
+  </header>
+
+  <div class="app-body" id="app-main">
+    <nav class="tool-panel" aria-label="工具面板">
+      <h2>工具</h2>
+      <button type="button" id="tool-select" data-mode="select" aria-pressed="true">选择 (V)</button>
+      <button type="button" id="tool-rect" data-mode="rect" aria-pressed="false">矩形 (R)</button>
+      <button type="button" id="tool-ellipse" data-mode="ellipse" aria-pressed="false">椭圆 (E)</button>
+      <button type="button" id="action-delete">删除选中 (Del)</button>
+      <button type="button" id="action-undo">撤销 (Ctrl+Z)</button>
+      <button type="button" id="action-redo">重做 (Ctrl+Y)</button>
+      <button type="button" id="action-props">属性… (Enter)</button>
+      <button type="button" id="action-export">导出 JSON</button>
+    </nav>
+
+    <main class="canvas-area">
+      <canvas id="canvas" width="640" height="420" tabindex="0"
+              role="application"
+              aria-label="画布。方向键移动选中图形，回车编辑属性，Delete 删除，Ctrl+Z 撤销。">
+      </canvas>
+      <p class="hint" id="canvas-hint">
+        快捷键：V/R/E 切换工具，方向键移动，Enter 属性，Delete 删除，Ctrl+Z/Y 撤销重做。输入框聚焦时快捷键不生效。
+      </p>
+      <label class="demo-field">
+        备注（用于验证输入框聚焦时画布快捷键被隔离）：
+        <input type="text" id="note-input" placeholder="在此输入时按 R/V/E 不会切换工具">
+      </label>
+    </main>
+  </div>
+
+  <div id="modal-backdrop" class="modal-backdrop" hidden>
+    <div id="props-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"
+         class="modal">
+      <h2 id="dialog-title">图形属性</h2>
+      <form id="props-form">
+        <label>标签
+          <input type="text" id="prop-label" name="label" maxlength="120">
+        </label>
+        <label>X
+          <input type="number" id="prop-x" name="x" min="-10000" max="10000" step="1">
+        </label>
+        <label>Y
+          <input type="number" id="prop-y" name="y" min="-10000" max="10000" step="1">
+        </label>
+        <div class="dialog-actions">
+          <button type="submit" id="prop-save">保存</button>
+          <button type="button" id="prop-cancel">取消 (Esc)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="src/editor-core.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
