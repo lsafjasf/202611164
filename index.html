@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Dependency Cache Studio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </span>
+          <div>
+            <h1>Dependency Cache Studio</h1>
+            <p>布局 · 绘制 · 子树失效</p>
+          </div>
+        </div>
+
+        <div class="scene-picker">
+          <label for="scene-select">场景夹具</label>
+          <select id="scene-select">
+            <option value="normal">正常输入 · 仪表盘</option>
+            <option value="boundary">边界输入 · 247 节点</option>
+            <option value="corrupted">损坏输入 · 恢复测试</option>
+          </select>
+        </div>
+
+        <div class="mode-switch" role="group" aria-label="缓存模式">
+          <button type="button" data-mode="fixed" class="is-active" aria-pressed="true">Fixed</button>
+          <button type="button" data-mode="legacy" aria-pressed="false">Legacy repro</button>
+        </div>
+
+        <div class="top-actions">
+          <button type="button" id="verify-button" class="button button-secondary">
+            <span aria-hidden="true">↻</span> 运行前后对比
+          </button>
+          <button type="button" id="recover-button" class="button button-warning" hidden>
+            采用安全场景
+          </button>
+          <button type="button" id="export-json" class="button button-ghost">导出 JSON</button>
+          <button type="button" id="export-png" class="button button-primary">导出 PNG</button>
+        </div>
+      </header>
+
+      <div class="status-strip" id="status-strip" role="status" aria-live="polite">
+        <span class="status-item">
+          <span class="status-dot" id="status-dot"></span>
+          当前模式 <strong id="status-mode">Fixed dependency cache</strong>
+        </span>
+        <span class="status-item">本帧 <strong id="status-elapsed">-- ms</strong></span>
+        <span class="status-item">命中 <strong id="status-hit">--%</strong></span>
+        <span class="status-item status-recovery" id="status-recovery">
+          恢复建议：若出现旧图，清空缓存并重绘；错误不会被静默忽略。
+        </span>
+      </div>
+
+      <main class="workspace">
+        <aside class="panel layers-panel" aria-label="图层">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">DOCUMENT</span>
+              <h2>图层</h2>
+            </div>
+            <span class="count-chip" id="node-count">0 节点</span>
+          </div>
+          <div class="layer-tree" id="layer-tree"></div>
+          <div class="layer-actions">
+            <button type="button" class="tool-button" id="add-rect">＋ 矩形</button>
+            <button type="button" class="tool-button" id="add-text">＋ 文本</button>
+            <button type="button" class="tool-button danger" id="delete-node">删除</button>
+          </div>
+        </aside>
+
+        <section class="panel stage-panel" aria-label="画布">
+          <div class="stage-heading">
+            <div class="crumbs">
+              <span>Pages</span><span>/</span><strong id="scene-name">Release dashboard</strong>
+              <span class="edited-pill" id="edited-pill" hidden>已修改</span>
+            </div>
+            <div class="stage-tools">
+              <span class="canvas-size">960 × 640</span>
+              <span class="zoom-label">Fit</span>
+            </div>
+          </div>
+          <div class="canvas-wrap" id="canvas-wrap">
+            <canvas id="editor-canvas" width="960" height="640" aria-label="图形编辑器画布"></canvas>
+            <div class="canvas-hint" id="canvas-hint">选择图层后，在右侧修改父元素尺寸、字体或可见性。</div>
+          </div>
+          <div class="metrics-grid" aria-label="实时缓存指标">
+            <div class="metric">
+              <span class="metric-label">Hit rate</span>
+              <strong id="metric-hit-rate">--</strong>
+              <small id="metric-hit-count">0 hits / 0 misses</small>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Recomputes</span>
+              <strong id="metric-recomputes">--</strong>
+              <small id="metric-recompute-split">layout 0 · draw 0</small>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Dependency edges</span>
+              <strong id="metric-edges">--</strong>
+              <small id="metric-entries">0 cache entries</small>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Cache bytes</span>
+              <strong id="metric-bytes">--</strong>
+              <small id="metric-invalidated">0 invalidated</small>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel side-panel" aria-label="属性与验证">
+          <div class="tabs" role="tablist">
+            <button type="button" class="tab is-active" data-tab="inspector" role="tab" aria-selected="true">属性</button>
+            <button type="button" class="tab" data-tab="verify" role="tab" aria-selected="false">
+              验证 <span class="tab-count" id="error-count">0</span>
+            </button>
+          </div>
+
+          <section class="tab-pane" id="inspector-pane" role="tabpanel">
+            <div class="empty-selection" id="empty-selection">
+              <div class="empty-icon" aria-hidden="true">◇</div>
+              <h3>选择一个图层</h3>
+              <p>尺寸、字体与可见性会触发当前节点的子树失效。</p>
+            </div>
+            <form id="inspector-form" hidden>
+              <div class="selection-title">
+                <span class="type-badge" id="selection-type">FRAME</span>
+                <div>
+                  <h3 id="selection-name">Frame</h3>
+                  <p id="selection-id">root</p>
+                </div>
+              </div>
+
+              <fieldset>
+                <legend>几何</legend>
+                <div class="field-grid">
+                  <label>X <input id="field-x" name="x" inputmode="decimal" /></label>
+                  <label>Y <input id="field-y" name="y" inputmode="decimal" /></label>
+                  <label>W <input id="field-width" name="width" inputmode="decimal" /></label>
+                  <label>H <input id="field-height" name="height" inputmode="decimal" /></label>
+                </div>
+                <p class="field-note">支持 px 或百分比，例如 <code>94%</code>。</p>
+              </fieldset>
+
+              <fieldset>
+                <legend>外观与继承</legend>
+                <div class="field-grid">
+                  <label class="span-2">填充 <input id="field-fill" name="fill" /></label>
+                  <label class="span-2">文字
+                    <textarea id="field-text" name="text" rows="3"></textarea>
+                  </label>
+                  <label>字体 px <input id="field-font-size" name="fontSize" inputmode="decimal" /></label>
+                  <label>字重 <input id="field-font-weight" name="fontWeight" inputmode="numeric" /></label>
+                </div>
+                <label class="toggle-row">
+                  <span>
+                    <strong>可见</strong>
+                    <small>隐藏会影响整棵子树</small>
+                  </span>
+                  <input id="field-visible" name="visible" type="checkbox" />
+                </label>
+              </fieldset>
+
+              <div class="inspector-actions">
+                <button type="button" id="select-parent" class="button button-ghost">选择父级</button>
+                <button type="button" id="delete-inspector" class="button button-danger">删除节点</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="tab-pane" id="verify-pane" role="tabpanel" hidden>
+            <div class="verify-heading">
+              <div>
+                <span class="eyebrow">REPRODUCIBLE CHECK</span>
+                <h3>修改前后对比</h3>
+              </div>
+              <button type="button" id="download-report" class="icon-button" title="下载验证报告" aria-label="下载验证报告">↓</button>
+            </div>
+            <p class="verify-note" id="verify-note">尚未运行。验证会重新执行正常、边界、损坏三组输入。</p>
+
+            <div class="verify-summary" id="verify-summary" hidden></div>
+            <div class="comparison-list" id="comparison-list"></div>
+
+            <div class="log-heading">
+              <h4>错误日志</h4>
+              <span id="log-caption">0 条</span>
+            </div>
+            <div class="error-log" id="error-log">
+              <p class="log-empty">当前没有错误。</p>
+            </div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="bottom-bar">
+        <span><strong id="footer-mode">Fixed</strong> · 依赖键包含祖先几何、继承字体与可见性</span>
+        <span id="footer-resource">0 entries · 0 B · 0 dependency edges</span>
+        <span id="footer-status">Ready</span>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="./src/ui/app.js"></script>
+  </body>
+</html>
