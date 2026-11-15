@@ -1,0 +1,29 @@
+{
+  "name": "iso-city-seed",
+  "version": "1.0.0",
+  "description": "Seeded isometric city generator with reproducible verification",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/run-tests.mjs",
+    "serve": "python3 -m http.server 8123",
+    "test:browser": "node tests/browser-smoke.mjs"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsafjasf/202611164.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lsafjasf/202611164/issues"
+  },
+  "homepage": "https://github.com/lsafjasf/202611164#readme",
+  "devDependencies": {
+    "playwright": "^1.65.1"
+  }
+}

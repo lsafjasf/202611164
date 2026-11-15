@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Seed Iso City · 等距城市生成器</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="panel">
+    <h1>等距城市生成器</h1>
+
+    <section>
+      <h2>生成规则</h2>
+      <label>Seed
+        <input id="seed" type="number" />
+      </label>
+      <label>目标数量
+        <input id="targetCount" type="number" min="2" max="8" />
+      </label>
+      <label>网格宽
+        <input id="width" type="number" min="8" max="40" />
+      </label>
+      <label>网格高
+        <input id="height" type="number" min="8" max="32" />
+      </label>
+      <label>最低层数
+        <input id="minFloors" type="number" min="1" max="12" />
+      </label>
+      <label>最高层数
+        <input id="maxFloors" type="number" min="1" max="12" />
+      </label>
+      <div class="btn-row">
+        <button id="regenerate" class="primary">显式重新生成</button>
+      </div>
+      <p id="ruleSummary" class="summary"></p>
+      <p class="summary mono" id="metaLine"></p>
+    </section>
+
+    <section>
+      <h2>视图（不影响布局哈希）</h2>
+      <label>层高 <span id="floorHeightVal"></span>
+        <input id="floorHeight" type="range" min="8" max="60" />
+      </label>
+      <label>隐藏 &lt; N 层建筑 <span id="hideBelowVal"></span>
+        <input id="hideBelow" type="range" min="0" max="12" />
+      </label>
+      <label>剖面行 y <span id="sectionRowVal"></span>
+        <input id="sectionRow" type="range" min="-1" max="31" />
+      </label>
+    </section>
+    <section id="editSection" hidden>
+      <h2>选中建筑 <span id="selectedLabel" class="mono"></span></h2>
+      <label>层数
+        <input id="editFloors" type="number" min="1" max="12" />
+      </label>
+      <label>屋顶样式
+        <select id="editRoof">
+          <option value="flat">flat 平屋顶</option>
+          <option value="gable">gable 双坡</option>
+          <option value="pyramid">pyramid 尖顶</option>
+          <option value="hip">hip 四坡</option>
+        </select>
+      </label>
+      <div class="btn-row">
+        <button id="applyEdit" class="primary">应用（仅重算该格）</button>
+        <button id="clearSelect">取消</button>
+      </div>
+      <p class="hint">目标格不可编辑；修改其他格不会移动任何建筑。</p>
+    </section>
+
+    <section>
+      <h2>校验 / 数据</h2>
+      <div class="btn-row wrap">
+        <button id="runVerify">复现校验（多 seed）</button>
+        <button id="demoBlock">演示阻断诊断</button>
+        <button id="save">保存参数</button>
+        <button id="load">载入参数</button>
+        <button id="exportCity">导出城市 PNG</button>
+        <button id="exportProfile">导出剖面 PNG</button>
+      </div>
+      <pre id="log" class="log"></pre>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <canvas id="city" width="960" height="640"></canvas>
+    <canvas id="profile" width="960" height="200"></canvas>
+  </main>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
