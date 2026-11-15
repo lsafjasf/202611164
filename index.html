@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07110f" />
+    <title>街区织构 · BLOCKWEAVE</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="街区织构首页">
+          <span class="brand-mark" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <span>
+            <strong>街区织构</strong>
+            <small>BLOCKWEAVE / URBAN LAB</small>
+          </span>
+        </a>
+        <div class="top-meta">
+          <span class="status-dot"><i></i> 可复现生成器</span>
+          <span class="divider"></span>
+          <span id="top-seed">SEED 82419</span>
+          <span id="top-hash">#--------</span>
+        </div>
+        <div class="top-actions">
+          <button class="btn ghost" id="load-btn" type="button" title="载入上次保存">载入</button>
+          <button class="btn ghost" id="save-btn" type="button" title="保存当前场景">保存</button>
+          <button class="btn primary" id="regenerate-btn" type="button">
+            <span class="btn-icon">↻</span> 重新生成
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="control-panel">
+          <section class="panel-head">
+            <div>
+              <p class="eyebrow">GENERATOR / 01</p>
+              <h1>城市切片</h1>
+            </div>
+            <button class="icon-btn" id="random-seed-btn" type="button" title="换一个 seed">⌁</button>
+          </section>
+
+          <section class="seed-block">
+            <label for="seed-input">随机种子</label>
+            <div class="seed-row">
+              <span class="hash-prefix">#</span>
+              <input id="seed-input" type="text" inputmode="numeric" value="82419" aria-label="随机种子" />
+              <button id="apply-seed" class="apply-btn" type="button">应用</button>
+            </div>
+            <p class="helper">同一 seed + 参数 = 完全一致的城市布局</p>
+          </section>
+
+          <section class="sliders">
+            <div class="control-label">
+              <label for="density-slider">建筑密度</label>
+              <output id="density-value">62%</output>
+            </div>
+            <input id="density-slider" class="range" type="range" min="20" max="100" value="62" />
+            <div class="range-scale"><span>低密</span><span>高密</span></div>
+
+            <div class="control-label scale-label">
+              <label for="scale-slider">街区尺度</label>
+              <output id="scale-value">152m</output>
+            </div>
+            <input id="scale-slider" class="range" type="range" min="105" max="205" step="5" value="152" />
+            <div class="range-scale"><span>细密</span><span>开阔</span></div>
+          </section>
+
+          <section class="mode-section">
+            <p class="section-kicker">编辑工具</p>
+            <div class="mode-switch" role="group" aria-label="编辑工具">
+              <button class="mode-btn active" data-mode="select" type="button">
+                <span>↖</span> 选择 / 拖动
+              </button>
+              <button class="mode-btn" data-mode="blocker" type="button">
+                <span>⊘</span> 道路阻断
+              </button>
+            </div>
+            <p class="mode-hint" id="mode-hint">拖动楼栋微调位置，拖动公园即可搬迁到空街区。</p>
+          </section>
+
+          <section class="object-card" id="object-card">
+            <p class="section-kicker">当前选择</p>
+            <div class="empty-selection" id="empty-selection">
+              <span class="selection-cross">＋</span>
+              <div>
+                <strong>点选地图对象</strong>
+                <p>楼栋、公园或路障均可检查</p>
+              </div>
+            </div>
+            <div class="selection-detail" id="selection-detail" hidden></div>
+          </section>
+
+          <section class="rules">
+            <div class="rules-head">
+              <p class="section-kicker">当前规则摘要</p>
+              <span class="rule-status"><i></i> 生效中</span>
+            </div>
+            <ul>
+              <li><span>路网</span><b>正交网格 · 全域连通</b></li>
+              <li><span>建筑</span><b>离路 ≥ 8m · 街区内不重叠</b></li>
+              <li><span>水系</span><b>低洼保留区 · 禁止建设</b></li>
+              <li><span>绿化</span><b>公园直连步道 · 路障影响可达</b></li>
+            </ul>
+          </section>
+
+          <footer class="panel-footer">
+            <span>LOCAL MODEL</span>
+            <span>v1.0 · 1280 × 820</span>
+          </footer>
+        </aside>
+
+        <section class="map-column">
+          <div class="map-shell">
+            <div class="map-toolbar">
+              <div class="map-title">
+                <p class="eyebrow">LIVE PLAN / 俯视街区</p>
+                <h2 id="district-title">南港实验街区</h2>
+              </div>
+              <div class="map-badges">
+                <span class="map-badge"><i class="badge-green"></i><b id="target-badge">0</b> 个目标</span>
+                <span class="map-badge"><i class="badge-amber"></i><b id="building-badge">0</b> 栋建筑</span>
+                <span class="map-badge"><i class="badge-blue"></i><b id="green-badge">0</b> m² 绿地</span>
+              </div>
+            </div>
+
+            <div class="canvas-wrap" id="canvas-wrap">
+              <canvas id="city-canvas" width="1280" height="820" aria-label="俯视街区规划图"></canvas>
+              <div class="canvas-overlay top-left">
+                <div class="north-mark"><span>N</span><i></i></div>
+                <div class="scale-mark"><i></i><span>100 m</span></div>
+              </div>
+              <div class="canvas-overlay legend">
+                <span><i class="legend-building"></i>建筑</span>
+                <span><i class="legend-park"></i>公园</span>
+                <span><i class="legend-water"></i>水系</span>
+                <span><i class="legend-target"></i>目标</span>
+                <span><i class="legend-blocker"></i>阻断</span>
+              </div>
+              <div class="toast" id="toast" role="status" aria-live="polite"></div>
+              <div class="map-loading" id="map-loading" hidden><span></span>正在重算受影响区域</div>
+            </div>
+
+            <div class="map-footer">
+              <div class="update-report" id="update-report">
+                <span class="report-light"></span>
+                <div>
+                  <strong>场景已就绪</strong>
+                  <p>拖动或使用参数控制开始规划</p>
+                </div>
+              </div>
+              <div class="route-alert" id="route-alert" hidden>
+                <span>!</span>
+                <div><strong>路线阻断</strong><p id="route-alert-text"></p></div>
+              </div>
+              <div class="hash-readout">
+                <span>LAYOUT HASH</span>
+                <code id="layout-hash">--------</code>
+              </div>
+            </div>
+          </div>
+
+          <div class="lower-grid">
+            <section class="metric-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">REACHABILITY / 连通性</p>
+                  <h3>目标可达</h3>
+                </div>
+                <span id="reachable-ratio" class="big-number">0/0</span>
+              </div>
+              <div class="target-list" id="target-list"></div>
+            </section>
+
+            <section class="metric-card stats-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">GREEN SYSTEM / 绿化统计</p>
+                  <h3>公园服务</h3>
+                </div>
+                <span class="sync-tag" id="green-sync">同步</span>
+              </div>
+              <div class="stat-grid">
+                <div><span>绿化覆盖</span><b id="coverage-stat">0%</b></div>
+                <div><span>步道长度</span><b id="path-stat">0 m</b></div>
+                <div><span>树木数量</span><b id="tree-stat">0</b></div>
+                <div><span>服务建筑</span><b id="served-stat">0</b></div>
+              </div>
+              <div class="mini-bars" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </section>
+
+            <section class="metric-card verify-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">REPRODUCIBILITY / 双 seed 校验</p>
+                  <h3>可复现性</h3>
+                </div>
+                <button class="mini-action" id="verify-btn" type="button">重跑</button>
+              </div>
+              <div class="verify-summary" id="verify-summary">
+                <span class="verify-icon">✓</span>
+                <div><strong>等待校验</strong><p>将检查两个 seed</p></div>
+              </div>
+              <div class="verify-list" id="verify-list"></div>
+              <div class="save-proof" id="save-proof">
+                <span>保存 / 载入</span>
+                <b>尚未测试</b>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <input type="file" id="import-input" accept="application/json,.json" hidden />
+    </div>
+    <script type="module" src="/src/app.js"></script>
+  </body>
+</html>
