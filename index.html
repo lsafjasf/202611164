@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090b13" />
+    <title>PULSE GRID — 四键节奏工坊</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Pulse Grid 首页">
+          <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+          <span>PULSE<span>GRID</span></span>
+        </a>
+        <div class="session-state">
+          <span class="live-dot"></span>
+          <span id="sessionStatus">SYSTEM READY</span>
+          <span class="session-divider"></span>
+          <span id="clockReadout">00:00.000</span>
+        </div>
+        <nav class="top-actions" aria-label="工程操作">
+          <button class="icon-button" id="saveProject" title="保存工程">
+            <span class="button-icon">↓</span><span>保存</span>
+          </button>
+          <button class="icon-button" id="loadProject" title="载入工程">
+            <span class="button-icon">↑</span><span>载入</span>
+          </button>
+          <button class="icon-button" id="exportAudio" title="导出音频">
+            <span class="button-icon">◉</span><span>导出</span>
+          </button>
+        </nav>
+      </header>
+
+      <main class="workspace">
+        <section class="game-column">
+          <div class="hud">
+            <div class="hud-block">
+              <span class="eyebrow">SCORE</span>
+              <strong id="scoreValue">000000</strong>
+            </div>
+            <div class="hud-block combo-block">
+              <span class="eyebrow">COMBO</span>
+              <strong id="comboValue">0<small>×</small></strong>
+            </div>
+            <div class="hud-center">
+              <span class="eyebrow" id="difficultyLabel">NORMAL · 120 BPM</span>
+              <div class="beat-pips" id="beatPips"><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div class="hud-block align-right">
+              <span class="eyebrow">ACCURACY</span>
+              <strong id="accuracyValue">100<small>%</small></strong>
+            </div>
+          </div>
+
+          <div class="stage-wrap" id="stageWrap">
+            <canvas id="gameCanvas" aria-label="四轨节奏游戏画面"></canvas>
+            <div class="scanlines"></div>
+            <div class="stage-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+            <div class="judgment-flash" id="judgmentFlash" aria-live="polite"></div>
+
+            <div class="start-overlay" id="startOverlay">
+              <div class="start-card">
+                <span class="kicker">AUDIO-REACTIVE RHYTHM LAB</span>
+                <h1>让每一拍<br /><em>落在光里。</em></h1>
+                <p>四轨音符沿节拍下落。在判定线亮起时敲击对应按键，让声音、颜色与分数共用同一条时间轴。</p>
+                <div class="start-meta">
+                  <span><b id="introNotes">64</b> NOTES</span>
+                  <span><b>1:00</b> LOOP</span>
+                  <span><b>4</b> LANES</span>
+                </div>
+                <div class="start-buttons">
+                  <button class="primary-button" id="startButton"><span>开始演奏</span><kbd>SPACE</kbd></button>
+                  <button class="secondary-button" id="calibrateButton">校准延迟</button>
+                </div>
+                <p class="start-hint">A / S / D / F 或点击轨道 · P 暂停</p>
+              </div>
+            </div>
+
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+              <div class="pause-panel">
+                <span class="kicker">TRANSPORT PAUSED</span>
+                <h2>时间已冻结</h2>
+                <p>所有已调度音源已停止。恢复时会重建音频锚点，不累积节拍误差。</p>
+                <button class="primary-button" id="resumeButton"><span>继续演奏</span><kbd>P</kbd></button>
+              </div>
+            </div>
+
+            <div class="result-overlay" id="resultOverlay" hidden>
+              <div class="result-panel">
+                <div class="result-head">
+                  <div>
+                    <span class="kicker">SESSION COMPLETE</span>
+                    <h2>节拍归档</h2>
+                  </div>
+                  <div class="result-score"><span>SCORE</span><b id="resultScore">0</b></div>
+                </div>
+                <div class="result-grade" id="resultGrade">S</div>
+                <div class="result-stats" id="resultStats"></div>
+                <div class="result-footer">
+                  <span id="resultAccuracy">ACCURACY 100.0%</span>
+                  <button class="secondary-button" id="retryButton">再来一次</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="transport">
+            <div class="transport-main">
+              <button class="transport-button" id="playPause" title="播放 / 暂停">
+                <span id="playIcon">▶</span>
+              </button>
+              <div class="transport-position">
+                <span id="transportTime">00:00.000</span>
+                <div class="timeline"><i id="timelineProgress"></i></div>
+                <span id="transportDuration">01:00.000</span>
+              </div>
+            </div>
+            <div class="transport-controls">
+              <label class="control">
+                <span>难度</span>
+                <select id="difficultySelect">
+                  <option value="easy">轻松 · 宽窗口</option>
+                  <option value="normal" selected>标准 · 120 BPM</option>
+                  <option value="hard">困难 · 紧窗口</option>
+                </select>
+              </label>
+              <label class="control speed-control">
+                <span>流速 <b id="speedValue">1.0×</b></span>
+                <input id="speedRange" type="range" min="0.7" max="1.6" step="0.1" value="1" />
+              </label>
+              <div class="control toggles">
+                <button class="toggle active" id="loopToggle" aria-pressed="true">循环</button>
+                <button class="toggle" id="metronomeToggle" aria-pressed="false">节拍器</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="side-column">
+          <section class="panel mixer-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">LANE MIXER</span>
+                <h3>声部参数</h3>
+              </div>
+              <span class="panel-tag">LIVE</span>
+            </div>
+            <div class="lane-list" id="laneList"></div>
+            <div class="mixer-footer">
+              <label class="control transpose-control">
+                <span>全局变调 <b id="transposeValue">0 st</b></span>
+                <input id="transposeRange" type="range" min="-12" max="12" step="1" value="0" />
+              </label>
+              <button class="mini-button" id="resetMixer">重置参数</button>
+            </div>
+          </section>
+
+          <section class="panel sync-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">SYNC LAB</span>
+                <h3>同步状态</h3>
+              </div>
+              <span class="sync-badge" id="syncBadge"><i></i> LOCKED</span>
+            </div>
+            <div class="sync-grid">
+              <div><span>输入延迟</span><b id="latencyValue">0 ms</b></div>
+              <div><span>音频时钟</span><b id="audioClock">—</b></div>
+              <div><span>节拍位置</span><b id="beatReadout">0.000</b></div>
+              <div><span>活跃音源</span><b id="voiceCount">0</b></div>
+            </div>
+            <div class="sync-note" id="syncNote">
+              <span class="pulse-ring"></span>
+              <p>调度器以 AudioContext 为主时钟，视觉帧仅做插值。</p>
+            </div>
+          </section>
+
+          <section class="panel audit-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">RELOAD AUDIT</span>
+                <h3>一致性快照</h3>
+              </div>
+              <button class="mini-button" id="runAudit">重测</button>
+            </div>
+            <div class="audit-list" id="auditList">
+              <div><span>音符数量</span><b id="auditNotes">—</b></div>
+              <div><span>节拍位置</span><b id="auditBeats">—</b></div>
+              <div><span>导出时长</span><b id="auditDuration">—</b></div>
+            </div>
+            <p class="audit-caption">首轮与工程重载后从 0 开始比较，容差 0.000 秒。</p>
+          </section>
+
+          <section class="panel shortcut-panel">
+            <span class="eyebrow">SHORTCUTS</span>
+            <div class="shortcut-row"><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><span>打击</span></div>
+            <div class="shortcut-row"><kbd>P</kbd><span>暂停 / 恢复</span><kbd>L</kbd><span>循环</span></div>
+          </section>
+        </aside>
+      </main>
+
+      <footer class="bottombar">
+        <span><i class="status-led"></i> <span id="footerStatus">音频引擎待命</span></span>
+        <span>WEB AUDIO / CANVAS / 48 kHz</span>
+      </footer>
+    </div>
+
+    <dialog class="calibration-dialog" id="calibrationDialog">
+      <div class="dialog-head">
+        <div>
+          <span class="eyebrow">LATENCY CALIBRATION</span>
+          <h2>跟着底鼓敲击</h2>
+        </div>
+        <button class="dialog-close" id="closeCalibration" aria-label="关闭">×</button>
+      </div>
+      <p class="dialog-copy">点击下方打击板或按空格。系统会测量你相对节拍的平均输入偏移，共需 8 次有效敲击。</p>
+      <div class="calibration-visual" id="calibrationVisual">
+        <span>READY</span>
+        <div class="calibration-bars" id="calibrationBars"></div>
+      </div>
+      <div class="calibration-stats">
+        <div><span>采样</span><b id="calibrationCount">0 / 8</b></div>
+        <div><span>平均偏移</span><b id="calibrationOffset">0 ms</b></div>
+        <div><span>稳定性</span><b id="calibrationSpread">—</b></div>
+      </div>
+      <button class="primary-button calibration-pad" id="calibrationPad"><span>点击 / 空格敲击</span><kbd>8 BEATS</kbd></button>
+      <div class="dialog-actions">
+        <button class="secondary-button" id="applyCalibration" disabled>应用校准</button>
+        <button class="text-button" id="resetCalibration">重置为 0 ms</button>
+      </div>
+    </dialog>
+
+    <input type="file" id="projectFileInput" accept=".json,application/json" hidden />
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
