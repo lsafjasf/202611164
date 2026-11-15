@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090c0a">
+  <meta name="description" content="矿灯熄灭后，用实时敲击回响判断盲巷长度与岔路方向。">
+  <title>盲巷 · 回声勘测</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="盲巷回声勘测">
+        <span class="brand-mark" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+        <span>
+          <strong>盲巷</strong>
+          <small>BLIND DRIFT / ACOUSTIC UNIT</small>
+        </span>
+      </a>
+      <div class="case-strip">
+        <span class="live-dot" aria-hidden="true"></span>
+        <span id="header-status">待命</span>
+        <span class="case-divider">/</span>
+        <span>SEED <b id="header-seed">—</b></span>
+      </div>
+      <nav class="top-actions" aria-label="调查操作">
+        <button id="sound-toggle" class="text-button" type="button" aria-pressed="false">声场 开</button>
+        <button id="pause-btn" class="text-button game-only" type="button" hidden>暂停</button>
+        <button id="open-submit" class="solid-button game-only" type="button" hidden>提交推断</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="intro-screen" class="screen intro-screen" aria-labelledby="intro-title">
+        <div class="intro-copy">
+          <div class="eyebrow"><span>现场 07</span><span>深度未登记</span></div>
+          <h1 id="intro-title">最后一次<br><em>敲击</em></h1>
+          <p class="lead">
+            矿灯熄灭。你只剩一只气瓶、一面岩壁，和耳朵。
+            巷道不会出现在屏幕上，只会在回响里短暂显形。
+          </p>
+          <div class="brief-grid">
+            <div><b>03</b><span>岔口转向</span></div>
+            <div><b>04</b><span>待判维度</span></div>
+            <div><b>100%</b><span>初始氧气</span></div>
+          </div>
+          <div class="seed-entry">
+            <label for="seed-input">案件 SEED</label>
+            <div class="seed-row">
+              <input id="seed-input" name="seed" maxlength="18" spellcheck="false" autocomplete="off" aria-describedby="seed-help">
+              <button id="random-seed" class="icon-button" type="button" aria-label="生成随机 seed">↻</button>
+              <button id="start-btn" class="start-button" type="button">
+                <span>开始调查</span>
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+            <p id="seed-help">同 seed 重开时，线索顺序与氧气惩罚完全一致。</p>
+          </div>
+          <div class="headphone-note">
+            <span class="headphone-icon" aria-hidden="true"></span>
+            <span>建议佩戴耳机。左右声像与时差是判断方向的唯一依据。</span>
+          </div>
+        </div>
+
+        <aside class="instrument-panel intro-instrument" aria-label="现场仪表">
+          <div class="panel-cap">
+            <span>FIELD INSTRUMENT / 07</span>
+            <span class="panel-screws" aria-hidden="true"><i></i><i></i></span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="intro-canvas" aria-label="氧气瓶与空白回声记录表"></canvas>
+          </div>
+          <div class="panel-foot">
+            <span>RECORDER READY</span>
+            <span>NO SIGNAL</span>
+          </div>
+        </aside>
+
+        <div class="intro-rail" aria-hidden="true">
+          <span>70° 14' 08" E</span><i></i><span>DEPTH −418 M</span>
+        </div>
+      </section>
+
+      <section id="game-screen" class="screen game-screen" hidden aria-labelledby="stage-title">
+        <div class="game-main">
+          <div class="stage-heading">
+            <div class="stage-meta">
+              <span id="stage-index">阶段 01 / 04</span>
+              <span class="stage-line" aria-hidden="true"></span>
+              <span id="stage-kind">SOUNDING</span>
+            </div>
+            <h2 id="stage-title">主巷测距</h2>
+            <p id="stage-description">先敲击岩壁。主回响的时差与频带会留在右侧记录表上。</p>
+          </div>
+
+          <div class="signal-console">
+            <div class="signal-head">
+              <span class="signal-label"><i aria-hidden="true"></i><span id="audio-status">声场待命</span></span>
+              <span id="probe-status">尚未敲击</span>
+            </div>
+            <button id="probe-btn" class="probe-button" type="button">
+              <span class="probe-glyph" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </span>
+              <span class="probe-copy">
+                <b>敲击岩壁</b>
+                <small>WEB AUDIO / LIVE SYNTHESIS</small>
+              </span>
+              <span class="probe-key" aria-hidden="true">SPACE</span>
+            </button>
+            <div class="echo-readout" aria-live="polite">
+              <span class="readout-mark" aria-hidden="true">∿</span>
+              <p id="echo-message">黑暗里还没有回响。</p>
+              <button id="replay-btn" class="replay-button" type="button" hidden>重听本次回响 ↻</button>
+            </div>
+          </div>
+
+          <div id="decision-panel" class="decision-panel" hidden>
+            <div class="decision-head">
+              <span id="decision-kicker">记录推断</span>
+              <span id="decision-hint">回响已写入记录表</span>
+            </div>
+            <div id="length-options" class="length-options" hidden aria-label="主巷长度判断"></div>
+            <div id="direction-options" class="direction-options" hidden aria-label="岔口方向判断"></div>
+            <button id="advance-btn" class="advance-button" type="button" hidden>
+              进入一号岔口 <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+
+          <div class="field-note">
+            <span class="field-note-index">NOTE / 声学</span>
+            <p id="field-note-text">长时差、低频率、方位明确的回响通常来自更深的空腔；短促高频声只说明近处岩壁。机械底噪会遮住弱回响。</p>
+          </div>
+
+          <ol class="progress-rail" aria-label="调查进度">
+            <li data-progress="main"><span>01</span>主巷</li>
+            <li data-progress="junction_1"><span>02</span>岔口一</li>
+            <li data-progress="junction_2"><span>03</span>岔口二</li>
+            <li data-progress="junction_3"><span>04</span>岔口三</li>
+          </ol>
+        </div>
+
+        <aside class="instrument-panel game-instrument" aria-label="现场仪表与回声记录">
+          <div class="panel-cap">
+            <span>FIELD INSTRUMENT / 07</span>
+            <span class="panel-screws" aria-hidden="true"><i></i><i></i></span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="game-canvas" aria-label="实时氧气余量与回声记录表"></canvas>
+          </div>
+          <div class="panel-foot">
+            <span id="canvas-foot-left">RECORDER ACTIVE</span>
+            <span>NO POSITIONAL MAP</span>
+          </div>
+        </aside>
+      </section>
+
+      <section id="result-screen" class="screen result-screen" hidden aria-labelledby="result-title">
+        <div class="result-main">
+          <div class="result-topline">
+            <span>CASE CLOSED / 封存编号 <b id="result-case-id">—</b></span>
+            <span id="result-seed-label">SEED —</span>
+          </div>
+          <div class="verdict-block">
+            <div class="verdict-copy">
+              <span id="verdict-kicker">推断核验完成</span>
+              <h2 id="result-title">推断成立</h2>
+              <p id="result-summary"></p>
+              <div class="result-flags">
+                <span><b id="result-correct">0 / 4</b>判断吻合</span>
+                <span><b id="result-oxygen">100%</b>剩余氧气</span>
+                <span><b id="result-turns">0 / 3</b>错误转向</span>
+              </div>
+            </div>
+            <div id="score-dial" class="score-dial" aria-hidden="true">
+              <span id="score-value">0</span>
+              <small>FOUR DIMENSIONS</small>
+            </div>
+          </div>
+
+          <div class="result-section-head">
+            <h3>判断 × 真实参数</h3>
+            <span>原始声源已并列归档</span>
+          </div>
+          <div class="result-table-wrap">
+            <table class="result-table">
+              <thead>
+                <tr>
+                  <th scope="col">判断维度</th>
+                  <th scope="col">你的判断</th>
+                  <th scope="col">真实参数</th>
+                  <th scope="col">对应声源 / 时间 / 频段</th>
+                  <th scope="col">核验</th>
+                </tr>
+              </thead>
+              <tbody id="result-body"></tbody>
+            </table>
+          </div>
+          <div id="error-callout" class="error-callout" hidden>
+            <span class="error-mark" aria-hidden="true">!</span>
+            <div>
+              <strong>需要修正的判断维度</strong>
+              <p id="error-detail"></p>
+            </div>
+          </div>
+          <p id="result-caveat" class="result-caveat"></p>
+          <div class="result-actions">
+            <button id="restart-seed" class="solid-button" type="button">同 seed 重开</button>
+            <button id="new-case" class="outline-button" type="button">换一个 seed</button>
+            <button id="back-cover" class="text-button" type="button">返回封面</button>
+          </div>
+        </div>
+
+        <aside class="instrument-panel result-instrument" aria-label="结案仪表与回声记录">
+          <div class="panel-cap">
+            <span>FIELD INSTRUMENT / 07</span>
+            <span class="panel-screws" aria-hidden="true"><i></i><i></i></span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="result-canvas" aria-label="结案时的氧气余量与回声记录表"></canvas>
+          </div>
+          <div class="panel-foot">
+            <span>RECORD SEALED</span>
+            <span>CASE ARCHIVED</span>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <span>BLIND DRIFT / 2026</span>
+      <span>所有声场由程序实时合成</span>
+    </footer>
+  </div>
+
+  <div id="pause-overlay" class="pause-overlay" hidden>
+    <div class="pause-card" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <span class="pause-index">PAUSED / 声场冻结</span>
+      <h2 id="pause-title">调查暂停</h2>
+      <p>AudioContext 已挂起，记录与线索顺序不会改变。</p>
+      <button id="resume-btn" class="solid-button" type="button">继续调查</button>
+    </div>
+  </div>
+
+  <div id="submit-modal" class="modal" hidden>
+    <div class="modal-scrim" data-close-submit></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+      <div class="modal-head">
+        <div>
+          <span>SEAL CONCLUSION / 不可撤回</span>
+          <h2 id="submit-title">封存推断</h2>
+        </div>
+        <button id="close-submit" class="modal-close" type="button" aria-label="关闭">×</button>
+      </div>
+      <p class="modal-intro">
+        提交前不会显示真实参数。请依据记录表中的时差、方位与频带，逐项核对四个判断。
+      </p>
+      <form id="conclusion-form">
+        <fieldset>
+          <legend><span>01</span> 主巷长度</legend>
+          <div id="length-radios" class="choice-radios"></div>
+        </fieldset>
+        <fieldset>
+          <legend><span>02</span> 一号岔口方向</legend>
+          <div id="junction-1-radios" class="choice-radios compact"></div>
+        </fieldset>
+        <fieldset>
+          <legend><span>03</span> 二号岔口方向</legend>
+          <div id="junction-2-radios" class="choice-radios compact"></div>
+        </fieldset>
+        <fieldset>
+          <legend><span>04</span> 三号岔口方向</legend>
+          <div id="junction-3-radios" class="choice-radios compact"></div>
+        </fieldset>
+        <div class="modal-warning">
+          <span aria-hidden="true">!</span>
+          <p>封存后将立即揭示真实巷道参数，无法继续探测。</p>
+        </div>
+        <div class="modal-actions">
+          <button id="cancel-submit" class="outline-button" type="button">返回记录表</button>
+          <button class="solid-button submit-confirm" type="submit">确认提交并结算</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="sr-live" class="sr-only" aria-live="polite"></div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "blind-drift-echo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A deterministic Web Audio mine echo investigation.",
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "test": "node --test tests/engine.test.js",
+    "test:ui": "node tests/ui-check.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.1"
+  }
+}
