@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雾港灯塔 · 信号推理案</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>雾港灯塔 · 信号推理案</h1>
+  <div class="seedline">
+    <label>案件 Seed
+      <input id="seedInput" type="text" value="A-1024" maxlength="24">
+    </label>
+    <button id="btnStart" class="primary">开始案件</button>
+    <button id="btnPause" disabled>暂停</button>
+    <button id="btnReplay" disabled>重播信号</button>
+    <button id="btnRestart" disabled>同 seed 重开</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="stage">
+    <canvas id="sea" width="960" height="560"></canvas>
+    <div id="phaseBadge" class="badge">未开始</div>
+    <div class="hud">
+      <div>轮次进度：<span id="hudRound">– / 3</span></div>
+      <div>信号计时：<span id="hudClock">0 ms</span></div>
+      <div>雾笛实测基频：<span id="hudFreq">– Hz</span></div>
+      <div>提交次数：<span id="hudAttempt">0 / 3</span></div>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <h2>实时测量记录</h2>
+    <p class="hint">声音与闪光均为程序实时产生；暂停会冻结画面与音频时钟，重播沿用同一份冻结时刻表，线索内容不变。</p>
+    <div id="logStrip" class="logstrip">
+      <div class="log-empty">开始案件后，这里逐条记录闪光（点/划）与雾笛事件。</div>
+    </div>
+    <div class="measure">
+      <div>每轮延迟实测（雾笛→首闪）：<span id="delayMeasure">等待第 1 轮信号…</span></div>
+    </div>
+
+    <h2>我的推断</h2>
+    <form id="answerForm">
+      <fieldset>
+        <legend>路线三位数字（每轮对应一位）</legend>
+        <div class="row3">
+          <input type="number" min="0" max="9" id="r0" required>
+          <input type="number" min="0" max="9" id="r1" required>
+          <input type="number" min="0" max="9" id="r2" required>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>机械延迟档位</legend>
+        <select id="delaySel" required>
+          <option value="">请选择…</option>
+          <option value="low">低延迟（≈240ms）</option>
+          <option value="mid">中延迟（≈620ms）</option>
+          <option value="high">高延迟（≈1050ms）</option>
+        </select>
+      </fieldset>
+      <fieldset>
+        <legend>风级（对照雾笛频段）</legend>
+        <select id="windSel" required>
+          <option value="">请选择…</option>
+          <option value="0">微风（60–120 Hz 低频段）</option>
+          <option value="1">和风（180–260 Hz 中频段）</option>
+          <option value="2">强风（320–420 Hz 高频段）</option>
+        </select>
+      </fieldset>
+      <button type="submit" id="btnSubmit" class="primary" disabled>提交结论</button>
+      <p id="formMsg" class="form-msg"></p>
+    </form>
+  </aside>
+</main>
+
+<section id="verdict" class="verdict hidden">
+  <h2>结算 · 推断与真实参数对照</h2>
+  <div id="verdictSummary"></div>
+  <table>
+    <thead>
+      <tr><th>判断维度</th><th>对应声源 / 时间 / 频段线索</th><th>你的结论</th><th>真实参数</th><th>判定</th></tr>
+    </thead>
+    <tbody id="verdictBody"></tbody>
+  </table>
+  <div id="verdictHints" class="hints"></div>
+</section>
+
+<script src="js/case.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "lighthouse-signal-case",
+  "version": "1.0.0",
+  "description": "雾港灯塔信号推理案：长短闪光摩斯电码 + 雾笛频段/延迟测量，Canvas 与 Web Audio 实时生成线索。",
+  "private": true,
+  "scripts": {
+    "test": "node --test test/case.test.js test/dom.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^24.0.0"
+  }
+}
