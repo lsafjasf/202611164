@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>山谷云带生成器 · 固定 Seed 可复现</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>山谷云带生成器</h1>
+    <div class="meta">
+      <span>Seed：<b id="seedOut"></b></span>
+      <span>目标数量：<b id="targetOut"></b></span>
+      <span>云团：<b id="puffOut"></b></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="stage">
+      <div id="blockBanner" hidden></div>
+      <canvas id="scene" width="960" height="600"></canvas>
+      <p class="hint">点击画布添加障碍（Shift+点击删除）；阻断时红叉标出阻断位置。</p>
+    </section>
+
+    <aside class="panel">
+      <h2>生成参数</h2>
+      <label>Seed
+        <input id="seedInput" type="number" min="0" max="4294967295">
+      </label>
+      <div class="btn-row">
+        <button id="applySeed">应用 Seed</button>
+        <button id="newSeed">随机 Seed</button>
+        <button id="regen" class="primary">显式重新生成</button>
+      </div>
+
+      <label>湿度 <span id="humidityVal"></span>
+        <input id="humidity" type="range" min="20" max="90" value="55">
+      </label>
+      <label>风速 <span id="windSpeedVal"></span>
+        <input id="windSpeed" type="range" min="0" max="100" value="30">
+      </label>
+      <label>高度 <span id="altitudeVal"></span>
+        <input id="altitude" type="range" min="0" max="100" value="55">
+      </label>
+      <label>风向
+        <select id="windDir">
+          <option value="E">东风（西 → 东）</option>
+          <option value="W">西风（东 → 西）</option>
+          <option value="S">南风（北 → 南）</option>
+          <option value="N">北风（南 → 北）</option>
+        </select>
+      </label>
+      <label class="check"><input id="toggleTargets" type="checkbox" checked> 显示路径目标点</label>
+      <label class="check"><input id="toggleRegions" type="checkbox"> 显示 8×5 区域网格</label>
+
+      <h2>规则摘要</h2>
+      <ul id="rules" class="rules"></ul>
+
+      <h2>哈希与重算范围</h2>
+      <dl class="hash">
+        <dt>地形哈希</dt><dd id="terrainHash"></dd>
+        <dt>布局哈希</dt><dd id="layoutHash"></dd>
+        <dt>本次重算</dt><dd id="scopeOut"></dd>
+        <dt>区域差异</dt><dd id="regionDiff"></dd>
+      </dl>
+
+      <h2>保存 / 载入 / 导出</h2>
+      <div class="btn-row">
+        <button id="save">保存参数</button>
+        <button id="load">载入参数</button>
+        <button id="exportFile">导出 JSON</button>
+        <button id="exportPng" class="primary">导出当前画面 PNG</button>
+      </div>
+      <label class="file">导入 JSON
+        <input id="importFile" type="file" accept="application/json">
+      </label>
+      <p id="ioStatus" class="io"></p>
+
+      <h2>可复现校验</h2>
+      <button id="runChecks">运行自检（双 Seed）</button>
+      <p id="checkSummary" class="io"></p>
+      <table class="checks">
+        <tbody id="checkBody"></tbody>
+      </table>
+
+      <h2>区域哈希（40 区）</h2>
+      <div class="region-wrap">
+        <table class="regions">
+          <thead><tr><th>#</th><th>地形</th><th>云</th><th>状态</th></tr></thead>
+          <tbody id="regionBody"></tbody>
+        </table>
+      </div>
+    </aside>
+  </main>
+
+  <script src="js/core.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

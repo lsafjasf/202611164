@@ -1,0 +1,29 @@
+{
+  "name": "uid763",
+  "version": "1.0.0",
+  "description": "固定 seed 的山谷云带生成器：Canvas 绘制云层、山脊与风迹，支持局部重算与哈希校验",
+  "main": "js/core.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node tests/check.js && node tests/render-smoke.js",
+    "check": "node tests/check.js",
+    "render-smoke": "node tests/render-smoke.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsafjasf/202611164.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lsafjasf/202611164/issues"
+  },
+  "homepage": "https://github.com/lsafjasf/202611164#readme",
+  "dependencies": {
+    "canvas": "^3.2.3"
+  }
+}
