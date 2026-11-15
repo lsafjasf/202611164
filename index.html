@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="固定 seed 的地下矿脉生成、运输连通校验与局部重算工作台"
+    />
+    <title>DEPTH//GRID · 矿脉连通性工作台</title>
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <p class="eyebrow">DEPTH//GRID <span>FIELD SYSTEM 07</span></p>
+            <h1>矿脉连通性工作台</h1>
+          </div>
+        </div>
+        <div class="top-status">
+          <div class="status-block">
+            <span>ACTIVE SEED</span>
+            <strong id="topSeed">CINDER-7341</strong>
+          </div>
+          <div class="status-block">
+            <span>TARGET LINK</span>
+            <strong id="topTargets">4 / 4</strong>
+          </div>
+          <div class="status-block hash-block">
+            <span>LAYOUT HASH</span>
+            <code id="topHash">00000000</code>
+          </div>
+          <button
+            class="icon-button"
+            id="helpButton"
+            type="button"
+            aria-label="打开操作说明"
+          >
+            ?
+          </button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="map-card panel">
+          <div class="panel-heading map-heading">
+            <div>
+              <p class="section-kicker">
+                SECTOR 07 <span>/</span> SUBTERRANEAN SURVEY
+              </p>
+              <h2>
+                矿层剖面
+                <span class="live-indicator" id="liveIndicator">LIVE</span>
+              </h2>
+            </div>
+            <div class="map-legend" aria-label="图例">
+              <span><i class="legend-rock"></i>岩块</span>
+              <span><i class="legend-ore"></i>矿脉</span>
+              <span><i class="legend-tunnel"></i>运输线</span>
+            </div>
+          </div>
+
+          <div class="canvas-shell" id="canvasShell">
+            <canvas
+              id="sceneCanvas"
+              aria-label="地下矿层网格，可点击岩块或通道进行编辑"
+            ></canvas>
+            <div class="canvas-readout canvas-readout-left">
+              <span>DEPTH −420 M</span>
+              <span>GRID <b id="gridSize">30×20</b></span>
+            </div>
+            <div class="canvas-readout canvas-readout-right">
+              <span id="canvasRevision">REV 000</span>
+            </div>
+            <div class="route-alert" id="routeAlert" role="status" hidden>
+              <span class="alert-pulse"></span>
+              <div>
+                <strong>路线阻断</strong>
+                <span id="routeAlertText"></span>
+              </div>
+            </div>
+            <div class="tile-inspector" id="tileInspector">
+              <span class="inspector-coord">X -- / Y --</span>
+              <span class="inspector-name">悬停查看地层</span>
+            </div>
+            <div class="scale-mark" aria-hidden="true">
+              <span>0</span><i></i><span>10 M</span>
+            </div>
+          </div>
+
+          <div class="tool-dock">
+            <div class="tool-group" role="toolbar" aria-label="编辑工具">
+              <button
+                class="tool-button active"
+                type="button"
+                data-tool="inspect"
+                aria-pressed="true"
+              >
+                <span class="tool-glyph cursor-glyph"></span>
+                查看
+                <kbd>1</kbd>
+              </button>
+              <button
+                class="tool-button"
+                type="button"
+                data-tool="dig"
+                aria-pressed="false"
+              >
+                <span class="tool-glyph dig-glyph"></span>
+                挖除岩块
+                <kbd>2</kbd>
+              </button>
+              <button
+                class="tool-button"
+                type="button"
+                data-tool="seal"
+                aria-pressed="false"
+              >
+                <span class="tool-glyph seal-glyph"></span>
+                设置障碍
+                <kbd>3</kbd>
+              </button>
+            </div>
+            <div class="dig-budget">
+              <div class="budget-label">
+                <span>挖除额度</span>
+                <b><span id="digUsed">0</span> / <span id="digLimit">8</span></b>
+              </div>
+              <div class="budget-track">
+                <i id="budgetFill"></i>
+              </div>
+            </div>
+            <div class="edit-feedback" id="editFeedback" aria-live="polite">
+              选择工具后点击网格进行修改
+            </div>
+          </div>
+        </section>
+
+        <aside class="side-panel">
+          <section class="panel control-panel">
+            <div class="panel-heading compact">
+              <div>
+                <p class="section-kicker">01 / GENERATOR</p>
+                <h2>场景生成</h2>
+              </div>
+              <span class="mode-tag">DETERMINISTIC</span>
+            </div>
+            <label class="field-label" for="seedInput">固定 SEED</label>
+            <div class="seed-input-row">
+              <input
+                id="seedInput"
+                type="text"
+                value="CINDER-7341"
+                spellcheck="false"
+                autocomplete="off"
+                maxlength="32"
+              />
+              <span class="seed-state" id="seedState">已载入</span>
+            </div>
+            <div class="preset-row" id="presetRow" aria-label="示例 seed"></div>
+            <button class="primary-button" id="regenerateButton" type="button">
+              <span class="regen-icon" aria-hidden="true">↻</span>
+              重新生成场景
+              <span class="button-note">清除当前编辑</span>
+            </button>
+          </section>
+
+          <section class="panel targets-panel">
+            <div class="panel-heading compact">
+              <div>
+                <p class="section-kicker">02 / TARGETS</p>
+                <h2>连通目标</h2>
+              </div>
+              <strong id="targetScore">4/4</strong>
+            </div>
+            <div class="target-list" id="targetList"></div>
+          </section>
+
+          <section class="panel rules-panel">
+            <div class="panel-heading compact">
+              <div>
+                <p class="section-kicker">03 / ACTIVE RULES</p>
+                <h2>规则摘要</h2>
+              </div>
+            </div>
+            <p class="rule-summary" id="ruleSummary"></p>
+            <div class="rule-grid">
+              <div><span>寻路</span><b>4 邻接 BFS</b></div>
+              <div><span>边界</span><b id="boundaryState">VALID</b></div>
+              <div><span>重叠</span><b id="overlapState">NONE</b></div>
+              <div><span>目标</span><b>3 矿脉 + 1 站</b></div>
+            </div>
+          </section>
+
+          <section class="panel param-panel">
+            <div class="panel-heading compact">
+              <div>
+                <p class="section-kicker">04 / LOCAL RECOMPUTE</p>
+                <h2>局部参数</h2>
+              </div>
+              <span class="mode-tag warm">REGION ONLY</span>
+            </div>
+            <div class="range-heading">
+              <label for="veinSizeInput">矿脉范围</label>
+              <output id="veinSizeOutput">2.15</output>
+            </div>
+            <input
+              id="veinSizeInput"
+              class="range-input"
+              type="range"
+              min="1.4"
+              max="2.8"
+              step="0.05"
+              value="2.15"
+            />
+            <div class="range-scale"><span>紧凑</span><span>扩散</span></div>
+            <button class="secondary-button" id="applyParamButton" type="button">
+              重算受影响矿区
+            </button>
+          </section>
+
+          <section class="panel save-panel">
+            <div class="panel-heading compact">
+              <div>
+                <p class="section-kicker">05 / SNAPSHOT</p>
+                <h2>存档与校验</h2>
+              </div>
+              <span class="save-light" id="saveLight"></span>
+            </div>
+            <div class="save-actions">
+              <button id="saveButton" class="mini-button" type="button">
+                保存快照
+              </button>
+              <button id="loadButton" class="mini-button" type="button">
+                载入快照
+              </button>
+              <button id="exportButton" class="mini-button ghost" type="button">
+                导出 JSON
+              </button>
+            </div>
+            <p class="save-meta" id="saveMeta">尚未保存 · 自动记录编辑</p>
+          </section>
+        </aside>
+      </main>
+
+      <section class="lower-deck">
+        <section class="panel log-panel">
+          <div class="panel-heading compact">
+            <div>
+              <p class="section-kicker">06 / EDIT JOURNAL</p>
+              <h2>编辑记录</h2>
+            </div>
+            <span class="log-count" id="logCount">0 EVENTS</span>
+          </div>
+          <div class="log-list" id="logList">
+            <div class="empty-log">
+              <span>NO EDITS YET</span>
+              每次修改都会生成可达性检查与区域哈希证明。
+            </div>
+          </div>
+        </section>
+
+        <section class="panel verify-panel">
+          <div class="panel-heading compact">
+            <div>
+              <p class="section-kicker">07 / ISOLATION PROOF</p>
+              <h2>区域隔离校验</h2>
+            </div>
+            <span class="verify-badge" id="verifyBadge">STANDBY</span>
+          </div>
+          <div class="verify-hero">
+            <div>
+              <span>未受影响区域哈希</span>
+              <code id="verifyHash">--------</code>
+            </div>
+            <div class="verify-ratio">
+              <strong id="verifyRatio">—</strong>
+              <span>格保持原样</span>
+            </div>
+          </div>
+          <div class="verify-grid">
+            <div><span>已变更</span><b id="verifyChanged">0 格</b></div>
+            <div><span>重算范围</span><b id="verifyRegion">—</b></div>
+            <div><span>布局哈希</span><b class="mono-small" id="bottomHash">00000000</b></div>
+          </div>
+          <p class="verify-note" id="verifyNote">
+            执行一次编辑后，这里会对比受影响区域之外的逐格哈希。
+          </p>
+        </section>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <dialog class="help-dialog" id="helpDialog">
+      <button class="dialog-close" id="helpClose" aria-label="关闭">×</button>
+      <p class="section-kicker">OPERATIONS MANUAL</p>
+      <h2>如何验证这张矿图</h2>
+      <ol>
+        <li>选择 <b>挖除岩块</b> 可消耗额度删除岩块并即时修复路线。</li>
+        <li>选择 <b>设置障碍</b> 封堵通道；断线时网格上会标出具体阻断坐标。</li>
+        <li>拖动矿脉范围后点击 <b>重算受影响矿区</b>，仅三个矿区包围盒会被重算。</li>
+        <li>保存快照再载入，布局哈希必须完全一致；导出 JSON 可复核 seed、参数与编辑记录。</li>
+      </ol>
+      <p class="help-footnote">
+        键盘 <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> 切换工具，<kbd>Esc</kbd> 返回查看模式。
+      </p>
+    </dialog>
+
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
