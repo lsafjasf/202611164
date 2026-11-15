@@ -1,0 +1,12 @@
+{
+  "name": "archipelago-route-generator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "固定 seed 群岛生成器：码头到灯塔航线、浮标修复、可达性校验、增量重算与哈希复现",
+  "scripts": {
+    "test": "node src/self-test.js",
+    "test:dom": "node test/dom-smoke.mjs",
+    "serve": "python3 -m http.server 8000"
+  }
+}
