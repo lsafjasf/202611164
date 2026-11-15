@@ -1,0 +1,14 @@
+{
+  "name": "prism-studio-793",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Fault-isolated image, audio and export studio with persistent state and accessibility checks.",
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}

@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111114">
+  <meta name="description" content="折光工作室：具备独立错误边界、持久化与无障碍验收的图像和音频编辑工作台。">
+  <title>折光工作室 · Prism Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#canvas-card">跳到画布工作区</a>
+  <div class="ambient ambient-a" aria-hidden="true"></div>
+  <div class="ambient ambient-b" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="折光工作室首页">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+      <span class="brand-copy">
+        <strong>折光工作室</strong>
+        <small>PRISM / STUDIO 793</small>
+      </span>
+    </a>
+    <div class="topbar-actions">
+      <span class="save-status" id="saveStatus" role="status">正在读取本地工程…</span>
+      <button class="button button-quiet" id="openA11y" type="button">无障碍摘要</button>
+      <div class="health-summary" id="healthSummary" aria-label="模块健康状态">
+        <span data-health="image"><i></i>图像</span>
+        <span data-health="audio"><i></i>音频</span>
+        <span data-health="export"><i></i>导出</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="project-head" aria-labelledby="projectTitle">
+      <div>
+        <p class="eyebrow">LOCAL PROJECT / 793</p>
+        <h1 id="projectTitle">海岸线的回声</h1>
+        <p class="project-subtitle">一层图形，一段合成音，一个不会因局部失败而丢失的工程。</p>
+      </div>
+      <dl class="project-facts">
+        <div><dt>修订</dt><dd id="revisionValue">rev 1</dd></div>
+        <div><dt>图层</dt><dd id="layerCountValue">3</dd></div>
+        <div><dt>导出</dt><dd id="exportCountValue">0</dd></div>
+      </dl>
+    </section>
+
+    <div class="workspace-grid">
+      <section class="stage-column" aria-label="画布与图层">
+        <article class="panel canvas-panel" id="canvas-card" tabindex="-1" aria-labelledby="canvasHeading">
+          <header class="panel-head">
+            <div>
+              <p class="panel-kicker">STAGE 01</p>
+              <h2 id="canvasHeading">构图</h2>
+            </div>
+            <div class="panel-head-meta">
+              <span class="pill" id="renderState">渲染中</span>
+              <span class="mono">960 × 540</span>
+            </div>
+          </header>
+
+          <div class="canvas-frame" id="canvasFrame">
+            <canvas
+              id="studioCanvas"
+              width="960"
+              height="540"
+              tabindex="0"
+              role="img"
+              aria-label="编辑画布，包含背景、图形与文字图层。使用方向键移动所选图层。"
+              aria-describedby="canvasHelp"
+            >当前浏览器不支持 Canvas。图层内容仍保存在本地工程中。</canvas>
+            <div class="canvas-badge" id="canvasStatus" role="status">
+              <span class="status-dot"></span>
+              <span>画布就绪</span>
+            </div>
+            <div class="selection-readout" id="selectionReadout" aria-hidden="true">未选择图层</div>
+          </div>
+          <p class="keyboard-help" id="canvasHelp">
+            <span><kbd>Tab</kbd> 聚焦</span>
+            <span><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> 移动</span>
+            <span><kbd>R</kbd> 矩形</span>
+            <span><kbd>C</kbd> 圆形</span>
+            <span><kbd>T</kbd> 文字</span>
+            <span><kbd>Delete</kbd> 删除</span>
+          </p>
+          <div class="canvas-actions" aria-label="添加图层">
+            <button class="button button-primary" type="button" data-add="rect">
+              <span aria-hidden="true">＋</span> 矩形
+            </button>
+            <button class="button" type="button" data-add="circle">
+              <span aria-hidden="true">＋</span> 圆形
+            </button>
+            <button class="button" type="button" data-add="text">
+              <span aria-hidden="true">＋</span> 文字
+            </button>
+            <span class="canvas-tip">也可在画布上拖动图层</span>
+          </div>
+        </article>
+
+        <article class="panel layers-panel" aria-labelledby="layersHeading">
+          <header class="panel-head compact">
+            <div>
+              <p class="panel-kicker">STAGE 02</p>
+              <h2 id="layersHeading">图层与选择</h2>
+            </div>
+            <span class="mono" id="layerCountBadge">3 LAYERS</span>
+          </header>
+          <div class="layers-layout">
+            <div class="layer-list-wrap">
+              <ul class="layer-list" id="layerList" aria-label="图层列表"></ul>
+              <p class="empty-state" id="layerEmpty" hidden>还没有图层。使用上方按钮添加矩形、圆形或文字。</p>
+            </div>
+            <div class="selection-editor" id="selectionInspector">
+              <p class="empty-state">在画布或图层列表中选择一个图层。</p>
+              <div class="editor-fields" id="editorFields" hidden>
+                <label class="field">
+                  <span>图层名</span>
+                  <input id="layerNameInput" type="text" maxlength="36" autocomplete="off">
+                </label>
+                <label class="field" id="textField">
+                  <span>文字内容</span>
+                  <textarea id="layerTextInput" rows="2" maxlength="80"></textarea>
+                </label>
+                <div class="field-pair" id="shapeFields">
+                  <label class="field">
+                    <span>宽度</span>
+                    <input id="layerWidthInput" type="range" min="48" max="520" step="2">
+                  </label>
+                  <label class="field">
+                    <span>高度</span>
+                    <input id="layerHeightInput" type="range" min="48" max="360" step="2">
+                  </label>
+                </div>
+                <div class="field-pair">
+                  <label class="field">
+                    <span>字号</span>
+                    <input id="layerSizeInput" type="range" min="20" max="96" step="1">
+                  </label>
+                  <label class="field field-color">
+                    <span>颜色</span>
+                    <input id="layerColorInput" type="color">
+                  </label>
+                </div>
+                <div class="nudge-row" aria-label="精确移动所选图层">
+                  <button class="icon-button" type="button" data-nudge="up" aria-label="向上移动 8 像素">↑</button>
+                  <button class="icon-button" type="button" data-nudge="left" aria-label="向左移动 8 像素">←</button>
+                  <button class="icon-button" type="button" data-nudge="down" aria-label="向下移动 8 像素">↓</button>
+                  <button class="icon-button" type="button" data-nudge="right" aria-label="向右移动 8 像素">→</button>
+                  <span id="positionReadout">x 0 / y 0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <aside class="side-column" aria-label="模块控制">
+        <article class="panel module-panel" id="imagePanel" aria-labelledby="imageHeading">
+          <header class="panel-head compact">
+            <div>
+              <p class="panel-kicker">MODULE 01</p>
+              <h2 id="imageHeading">图像处理</h2>
+            </div>
+            <span class="health-badge" id="imageHealth" data-state="ready">就绪</span>
+          </header>
+          <div class="module-error" id="imageError" role="alert" hidden>
+            <div class="error-icon" aria-hidden="true">!</div>
+            <div>
+              <h3 tabindex="-1">图像处理失败</h3>
+              <p class="error-message"></p>
+              <p class="error-advice"></p>
+              <button class="button button-small" type="button" data-retry="image">重试图像操作</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <span class="control-label" id="paletteLabel">背景预设</span>
+            <div class="palette-list" role="group" aria-labelledby="paletteLabel">
+              <button class="palette active" type="button" data-preset="tide" aria-pressed="true" aria-label="潮汐配色"><i style="--a:#16213e;--b:#ff7a59"></i></button>
+              <button class="palette" type="button" data-preset="citrus" aria-pressed="false" aria-label="柑橘配色"><i style="--a:#1a2e1f;--b:#c8ff6a"></i></button>
+              <button class="palette" type="button" data-preset="dusk" aria-pressed="false" aria-label="暮光配色"><i style="--a:#251b37;--b:#e9a6ff"></i></button>
+              <button class="palette" type="button" data-preset="paper" aria-pressed="false" aria-label="纸张配色"><i style="--a:#e8ddc6;--b:#b74b32"></i></button>
+            </div>
+          </div>
+          <label class="range-row" for="grainRange">
+            <span>颗粒</span>
+            <input id="grainRange" type="range" min="0" max="40" value="18">
+            <output id="grainOutput" for="grainRange">18%</output>
+          </label>
+          <label class="range-row" for="vignetteRange">
+            <span>暗角</span>
+            <input id="vignetteRange" type="range" min="0" max="70" value="28">
+            <output id="vignetteOutput" for="vignetteRange">28%</output>
+          </label>
+          <div class="module-actions">
+            <button class="button button-small button-primary" id="applyImage" type="button">应用并重绘</button>
+            <button class="button button-small" id="restoreRender" type="button" hidden>恢复画布</button>
+            <span class="module-status" id="imageStatus" role="status">画布与图层已同步</span>
+          </div>
+        </article>
+
+        <article class="panel module-panel audio-panel" id="audioPanel" aria-labelledby="audioHeading">
+          <header class="panel-head compact">
+            <div>
+              <p class="panel-kicker">MODULE 02</p>
+              <h2 id="audioHeading">音频合成</h2>
+            </div>
+            <span class="health-badge" id="audioHealth" data-state="ready">就绪</span>
+          </header>
+          <div class="module-error" id="audioError" role="alert" hidden>
+            <div class="error-icon" aria-hidden="true">!</div>
+            <div>
+              <h3 tabindex="-1">音频合成失败</h3>
+              <p class="error-message"></p>
+              <p class="error-advice"></p>
+              <button class="button button-small" type="button" data-retry="audio">停止并重试</button>
+            </div>
+          </div>
+          <div class="audio-display" aria-hidden="true">
+            <div class="waveform" id="waveformBars"></div>
+            <span class="audio-time" id="audioTime">00:00</span>
+          </div>
+          <div class="step-grid" id="stepGrid" role="group" aria-label="八步音符序列"></div>
+          <div class="audio-controls">
+            <label class="field">
+              <span>波形</span>
+              <select id="waveformSelect">
+                <option value="sine">正弦波</option>
+                <option value="triangle" selected>三角波</option>
+                <option value="sawtooth">锯齿波</option>
+                <option value="square">方波</option>
+              </select>
+            </label>
+            <label class="range-row" for="volumeRange">
+              <span>音量</span>
+              <input id="volumeRange" type="range" min="0" max="100" value="26">
+              <output id="volumeOutput" for="volumeRange">26%</output>
+            </label>
+          </div>
+          <div class="module-actions">
+            <button class="button button-small button-primary" id="playAudio" type="button">播放序列</button>
+            <button class="button button-small" id="stopAudio" type="button" disabled>停止</button>
+            <span class="module-status" id="audioStatus" role="status">音频引擎空闲</span>
+          </div>
+          <p class="module-footnote" id="audioResources">活动节点 0 · 资源已释放</p>
+        </article>
+
+        <article class="panel module-panel export-panel" id="exportPanel" aria-labelledby="exportHeading">
+          <header class="panel-head compact">
+            <div>
+              <p class="panel-kicker">MODULE 03</p>
+              <h2 id="exportHeading">导出</h2>
+            </div>
+            <span class="health-badge" id="exportHealth" data-state="ready">就绪</span>
+          </header>
+          <div class="module-error" id="exportError" role="alert" hidden>
+            <div class="error-icon" aria-hidden="true">!</div>
+            <div>
+              <h3 tabindex="-1">导出失败</h3>
+              <p class="error-message"></p>
+              <p class="error-advice"></p>
+              <button class="button button-small" type="button" data-retry="export">重试导出</button>
+            </div>
+          </div>
+          <label class="field project-name-field">
+            <span>工程名称</span>
+            <input id="projectNameInput" type="text" maxlength="48" autocomplete="off">
+          </label>
+          <div class="export-actions">
+            <button class="button button-primary" id="exportJson" type="button">
+              导出工程
+              <small>JSON · 可重新载入</small>
+            </button>
+            <button class="button" id="exportPng" type="button">
+              导出快照
+              <small>PNG · 当前画布</small>
+            </button>
+          </div>
+          <div class="export-guard" id="exportGuard">
+            <span class="guard-dot" aria-hidden="true"></span>
+            <span>导出前状态保护已开启</span>
+            <button class="text-button" type="button" id="restorePreExport" hidden>恢复导出前状态</button>
+          </div>
+          <div class="export-history-wrap">
+            <div class="history-head">
+              <span>最近导出</span>
+              <span class="mono" id="exportHistoryCount">0 条</span>
+            </div>
+            <ol class="export-history" id="exportHistory" aria-live="polite">
+              <li class="empty-state">尚未导出。成功后记录会保留在本地。</li>
+            </ol>
+          </div>
+          <p class="module-status" id="exportStatus" role="status">等待导出</p>
+        </article>
+      </aside>
+    </div>
+
+    <section class="lab-grid" aria-label="运行统计与验收测试">
+      <article class="panel stats-panel" aria-labelledby="statsHeading">
+        <header class="panel-head compact">
+          <div>
+            <p class="panel-kicker">OBSERVABILITY</p>
+            <h2 id="statsHeading">运行统计</h2>
+          </div>
+          <span class="pill" id="statsScope">持久化</span>
+        </header>
+        <div class="rate-block">
+          <strong id="successRate">—</strong>
+          <div>
+            <p id="successDetail">还没有模块操作</p>
+            <div class="rate-track" aria-hidden="true"><span id="rateFill"></span></div>
+          </div>
+        </div>
+        <div class="metric-grid">
+          <div class="metric" data-module="image">
+            <span>图像</span>
+            <strong id="metricImage">0 / 0</strong>
+            <small id="metricImageRate">暂无操作</small>
+          </div>
+          <div class="metric" data-module="audio">
+            <span>音频</span>
+            <strong id="metricAudio">0 / 0</strong>
+            <small id="metricAudioRate">暂无操作</small>
+          </div>
+          <div class="metric" data-module="export">
+            <span>导出</span>
+            <strong id="metricExport">0 / 0</strong>
+            <small id="metricExportRate">暂无操作</small>
+          </div>
+        </div>
+        <div class="failure-report">
+          <span class="failure-label">最近一次失败</span>
+          <p id="failureReason">暂无失败。失败时会显示模块、原因与重试建议。</p>
+        </div>
+        <div class="stats-actions">
+          <button class="button button-quiet button-small" id="clearStats" type="button">清除统计记录</button>
+          <span class="mono" id="lastSavedMeta">尚未保存</span>
+        </div>
+      </article>
+
+      <article class="panel test-panel" aria-labelledby="testHeading">
+        <header class="panel-head compact">
+          <div>
+            <p class="panel-kicker">REPEATABLE CHECKS</p>
+            <h2 id="testHeading">三组验收</h2>
+          </div>
+          <span class="pill" id="testSummary">未运行</span>
+        </header>
+        <p class="test-intro">测试在隔离快照中运行，结束后恢复你的工程与选择，不会重复创建导出文件或音频节点。</p>
+        <div class="test-suites">
+          <div class="suite" data-suite="default">
+            <div class="suite-top">
+              <span class="suite-name">默认</span>
+              <button class="button button-small" type="button" data-run-suite="default">运行</button>
+            </div>
+            <p>载入、键盘移动、指针选择与导出基线。</p>
+            <span class="suite-result" id="defaultResult">尚未运行</span>
+          </div>
+          <div class="suite" data-suite="boundary">
+            <div class="suite-top">
+              <span class="suite-name">边界</span>
+              <button class="button button-small" type="button" data-run-suite="boundary">运行</button>
+            </div>
+            <p>文字上限、零图层、长名称与重复重试。</p>
+            <span class="suite-result" id="boundaryResult">尚未运行</span>
+          </div>
+          <div class="suite" data-suite="error">
+            <div class="suite-top">
+              <span class="suite-name">错误</span>
+              <button class="button button-small" type="button" data-run-suite="error">运行</button>
+            </div>
+            <p>三模块独立失败、资源停止与状态保留。</p>
+            <span class="suite-result" id="errorResult">尚未运行</span>
+          </div>
+        </div>
+        <div class="test-actions">
+          <button class="button button-primary" id="runAllTests" type="button">运行全部验收</button>
+          <span id="testRunState" role="status">隔离运行 · 不修改本地工程</span>
+        </div>
+        <ol class="test-log" id="testLog" aria-label="验收结果明细"></ol>
+        <details class="fault-tools">
+          <summary>故障注入工具（一次性）</summary>
+          <p>注入后执行对应模块操作。故障只触发一次，以便验证重试恢复。</p>
+          <div class="fault-buttons">
+            <button class="button button-small" type="button" data-fault="image">下一次图像操作失败</button>
+            <button class="button button-small" type="button" data-fault="audio">下一次音频操作失败</button>
+            <button class="button button-small" type="button" data-fault="export">下一次导出失败</button>
+          </div>
+          <span class="module-status" id="faultStatus" role="status">未注入故障</span>
+        </details>
+      </article>
+    </section>
+
+    <footer class="site-footer">
+      <span>折光工作室 · 所有编辑保存在本机</span>
+      <span class="mono">ERROR BOUNDARY / PERSISTENCE / A11Y</span>
+    </footer>
+  </main>
+
+  <dialog class="a11y-dialog" id="a11yDialog" aria-labelledby="a11yTitle">
+    <div class="dialog-head">
+      <div>
+        <p class="panel-kicker">ACCESSIBILITY REPORT</p>
+        <h2 id="a11yTitle">无障碍检查摘要</h2>
+      </div>
+      <button class="icon-button" id="closeA11y" type="button" aria-label="关闭无障碍摘要">×</button>
+    </div>
+    <div class="a11y-body">
+      <p>已验证键盘、鼠标与单指触屏可以到达同一选择状态。焦点进入错误区域后会落在模块标题，读屏提示包含模块名、原因和下一步建议。</p>
+      <div class="a11y-grid">
+        <section>
+          <h3>已验证路径</h3>
+          <ul id="a11yPathList">
+            <li>Tab 聚焦画布，方向键移动所选图层。</li>
+            <li>图层按钮支持 Enter / Space，状态通过 aria-pressed 更新。</li>
+            <li>画布指针事件统一处理鼠标和触屏选择、拖动。</li>
+            <li>模块错误以 role="alert" 播报，并提供可聚焦的重试按钮。</li>
+            <li>导出成功率和失败原因写入运行统计，不使用笼统提示。</li>
+          </ul>
+        </section>
+        <section>
+          <h3>恢复与持久化</h3>
+          <ul>
+            <li>刷新后恢复工程名、图形、文字、音频参数、图层选择和导出记录。</li>
+            <li>自动保存采用本地快照；载入失败不会覆盖原快照。</li>
+            <li>重试前清理模块资源，避免重复音频节点或下载链接。</li>
+            <li>导出失败保留导出前快照，可显式恢复。</li>
+          </ul>
+        </section>
+      </div>
+      <p class="a11y-file-note">完整检查记录保存在仓库的 <code>ACCESSIBILITY.md</code>。</p>
+      <button class="button button-primary" id="dismissA11y" type="button">返回工作室</button>
+    </div>
+  </dialog>
+
+  <div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
