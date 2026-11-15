@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>山谷回声 · 广播器定位</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>山谷回声 · 广播器定位</h1>
+    <div class="seed-bar">
+      <label>Seed <input id="seedInput" type="number" value="20261116"></label>
+      <button id="newSeedBtn">随机 seed</button>
+      <button id="restartBtn">同 seed 重开</button>
+      <span id="caseInfo"></span>
+    </div>
+  </header>
+
+  <section class="rules">
+    <strong>山谷声学规则（恒定）：</strong>
+    直达声延迟 = 距离 × 0.12s ｜ 真回波与直达声时差 = 距离 × 0.25s ｜
+    相邻两棒起播间隔 1.5s ｜ 片段每 6s 循环。
+    某一台混有<strong>假回波</strong>：它依附于直达声，使用「消音窗口」压住直达声后假回波会消失，真回波仍在。
+    距离分档：近 &lt;5 ｜ 中 5~8.5 ｜ 远 &gt;8.5（单位）。方位按声像左右判断。
+  </section>
+
+  <section class="transport">
+    <button id="startBtn">开始</button>
+    <button id="pauseBtn" disabled>暂停</button>
+    <button id="replayBtn" disabled>重播</button>
+    <button id="silenceBtn" disabled>消音窗口（剩 2）</button>
+    <span id="status"></span>
+  </section>
+
+  <section class="timeline-wrap">
+    <h2>实时声纹时间线（按频段分离，程序实时生成）</h2>
+    <canvas id="timeline" width="960" height="240"></canvas>
+    <div class="legend">
+      <span class="dot" style="background:#e05555"></span>低频台
+      <span class="dot" style="background:#3fa34d"></span>中频台
+      <span class="dot" style="background:#4a7ddb"></span>高频台
+      <span class="muted">竖格 = 0.5s，右侧为当前时刻</span>
+    </div>
+  </section>
+
+  <section class="guess-panel">
+    <h2>你的推断</h2>
+    <div id="bandGuesses" class="band-guesses"></div>
+    <div class="order-guess">
+      <strong>播报顺序：</strong>
+      第1棒 <select id="order0"></select>
+      第2棒 <select id="order1"></select>
+      第3棒 <select id="order2"></select>
+    </div>
+    <button id="submitBtn" disabled>提交结论</button>
+    <span id="penaltyInfo"></span>
+  </section>
+
+  <section id="settlement" class="settlement hidden">
+    <h2>结算 · 推断与真实参数对照</h2>
+    <div id="scoreLine"></div>
+    <table id="resultTable">
+      <thead>
+        <tr><th>判断维度</th><th>声源</th><th>你的结论</th><th>真实参数</th><th>结果</th><th>时间 / 频段数据</th><th>提示</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <h3>真实地图</h3>
+    <canvas id="map" width="640" height="420"></canvas>
+    <div class="legend">
+      <span class="dot" style="background:#e05555"></span>低频台
+      <span class="dot" style="background:#3fa34d"></span>中频台
+      <span class="dot" style="background:#4a7ddb"></span>高频台
+      <span class="muted">实心=真实位置，空心=你的估计（方位×距离档）</span>
+    </div>
+  </section>
+
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

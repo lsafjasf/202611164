@@ -1,0 +1,76 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: #10151c;
+  color: #dfe6ee;
+  line-height: 1.6;
+}
+header {
+  padding: 14px 20px;
+  background: #18202b;
+  border-bottom: 1px solid #2a3542;
+}
+header h1 { margin: 0 0 8px; font-size: 20px; }
+.seed-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.seed-bar input { width: 110px; }
+#caseInfo { color: #8fa3b8; font-size: 13px; }
+button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:disabled { background: #37445a; cursor: not-allowed; }
+input, select {
+  background: #0d1218;
+  color: #dfe6ee;
+  border: 1px solid #2a3542;
+  border-radius: 5px;
+  padding: 5px 8px;
+}
+section { margin: 16px 20px; }
+.rules {
+  background: #18202b;
+  border: 1px solid #2a3542;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #b9c7d6;
+}
+.transport { display: flex; gap: 10px; align-items: center; }
+#status { color: #8fa3b8; font-size: 13px; }
+.timeline-wrap h2, .guess-panel h2, .settlement h2 { font-size: 16px; margin: 0 0 8px; }
+canvas { background: #0b0f14; border: 1px solid #2a3542; border-radius: 8px; max-width: 100%; }
+.legend { font-size: 13px; color: #b9c7d6; margin-top: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-left: 10px; }
+.legend .muted { color: #6b7c8f; margin-left: 14px; }
+.band-guesses { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.band-card {
+  background: #18202b;
+  border: 1px solid #2a3542;
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 200px;
+}
+.band-card h3 { margin: 0 0 8px; font-size: 15px; }
+.band-card label { display: block; font-size: 13px; margin-bottom: 6px; color: #b9c7d6; }
+.order-guess { margin-bottom: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#penaltyInfo { margin-left: 12px; color: #d9a441; font-size: 13px; }
+.hidden { display: none; }
+.settlement table { border-collapse: collapse; width: 100%; font-size: 13px; margin-bottom: 16px; }
+.settlement th, .settlement td {
+  border: 1px solid #2a3542;
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+.settlement th { background: #18202b; }
+td.ok { color: #5fd08a; }
+td.bad { color: #f07272; }
+#scoreLine { font-size: 16px; margin-bottom: 10px; }
+#map { display: block; }
