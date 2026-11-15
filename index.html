@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071013">
+  <title>夜航短波 · 三信标监听案</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="夜航短波监听台">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>夜航短波</strong><small>NOCTURNE / SW RECEIVER</small></span>
+      </a>
+      <div class="case-chip">
+        <span>CASE</span>
+        <strong id="headerCase">SW-0000</strong>
+        <i id="caseStatusDot"></i>
+      </div>
+      <div class="top-meta">
+        <span class="live-status" id="liveStatus"><i></i><b>待启动</b></span>
+        <span class="clock" id="elapsedClock">00:00.0</span>
+        <button class="icon-btn" id="helpBtn" type="button" aria-label="查看操作说明">?</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="left-column">
+        <section class="panel briefing">
+          <div class="panel-kicker"><span>案件简报</span><span id="caseSerial">NO. 000</span></div>
+          <h1>雾港静默<br><em>三分钟</em></h1>
+          <p>三个信标在拥挤的短波带内轮流发报。辨出真实载波，并还原它们一个周期内的出现顺序。</p>
+          <div class="case-facts">
+            <span><small>监听带</small><b>6.120–6.148 MHz</b></span>
+            <span><small>候选</small><b>06 台</b></span>
+            <span><small>需识别</small><b>03 枚</b></span>
+          </div>
+          <ol class="objectives">
+            <li><i>01</i><span>扫描频带，锁定三枚真实信标</span></li>
+            <li><i>02</i><span>排除邻频边带与伪装呼号</span></li>
+            <li><i>03</i><span>按周期内首次发报顺序提交</span></li>
+          </ol>
+          <div class="seed-box">
+            <label for="seedInput">CASE SEED</label>
+            <div>
+              <input id="seedInput" type="text" value="SW-0714" maxlength="20" spellcheck="false">
+              <button id="loadSeedBtn" type="button">载入</button>
+            </div>
+            <small>同 seed 的载波、方向、时序与惩罚规则完全一致。</small>
+          </div>
+        </section>
+
+        <section class="panel dossier">
+          <div class="panel-heading">
+            <div><span class="eyebrow">CANDIDATE REGISTER</span><h2>候选信标</h2></div>
+            <span class="count-badge" id="candidateCount">06</span>
+          </div>
+          <ul class="candidate-list" id="candidateList"></ul>
+          <p class="micro-note"><span></span>呼号仅代表在册身份，不等于本案真实信标。</p>
+        </section>
+      </aside>
+
+      <section class="center-column">
+        <section class="panel scope-panel">
+          <div class="scope-head">
+            <div>
+              <span class="eyebrow">RF PANORAMA</span>
+              <h2>实时频谱</h2>
+            </div>
+            <div class="scope-meta">
+              <span id="fftBadge">FFT 2048</span>
+              <span class="scope-live"><i></i>LIVE</span>
+            </div>
+          </div>
+          <div class="scope-wrap" id="scopeWrap">
+            <canvas id="spectrumCanvas" aria-label="实时短波频谱"></canvas>
+            <div class="scope-corner top-left">dBFS</div>
+            <div class="scope-corner top-right" id="bandReadout">6.120–6.148 MHz</div>
+            <div class="scope-hover" id="scopeHover"></div>
+            <div class="scope-paused" id="scopePaused"><span>PAUSED</span><small>线索时间已冻结</small></div>
+          </div>
+          <div class="scope-footer">
+            <span><i class="legend-line"></i>实时合成载波</span>
+            <span><i class="legend-dash"></i>调谐游标</span>
+            <span class="scope-tip">点击频谱或拖动游标调谐</span>
+          </div>
+        </section>
+
+        <section class="panel waterfall-panel">
+          <div class="waterfall-head">
+            <div><span class="eyebrow">HISTORY / 24 SEC</span><h3>瀑布记录</h3></div>
+            <span id="waterfallClock">−24.0s</span>
+          </div>
+          <canvas id="waterfallCanvas" aria-label="频谱历史瀑布"></canvas>
+        </section>
+
+        <section class="panel log-panel">
+          <div class="panel-heading log-heading">
+            <div><span class="eyebrow">OBSERVATION LOG</span><h2>监听记录</h2></div>
+            <span class="count-badge" id="evidenceCount">00</span>
+          </div>
+          <div class="cycle-line">
+            <span>周期 00:00</span>
+            <div class="cycle-rail"><i id="cycleProgress"></i></div>
+            <span id="cycleLabel">00:00 / 00:25</span>
+          </div>
+          <ol class="evidence-list" id="evidenceList">
+            <li class="empty-log"><span class="empty-wave"></span>尚未捕获载波。开始监听后，在频谱中寻找活动峰值。</li>
+          </ol>
+        </section>
+      </section>
+
+      <aside class="right-column">
+        <section class="panel receiver">
+          <div class="receiver-head">
+            <span class="receiver-model">RX—77</span>
+            <span class="rx-state" id="rxState"><i></i>STANDBY</span>
+          </div>
+          <div class="frequency-readout">
+            <span id="freqMhz">6.120</span><small>MHz</small>
+            <span class="freq-fine" id="freqFine">.000</span>
+          </div>
+          <label class="range-label" for="freqRange"><span>调谐频率</span><b id="freqLabel">6120.0 kHz</b></label>
+          <input class="range range-freq" id="freqRange" type="range" min="6120" max="6148" step="0.1" value="6120" aria-label="调谐频率">
+          <div class="scale-labels"><span>6.120</span><span>6.134</span><span>6.148</span></div>
+
+          <div class="control-divider"></div>
+          <div class="bearing-control">
+            <div class="compass-wrap">
+              <div class="compass" id="compass" role="slider" aria-label="天线方向" aria-valuemin="0" aria-valuemax="359" aria-valuenow="0" tabindex="0">
+                <span class="tick n">N</span><span class="tick e">E</span><span class="tick s">S</span><span class="tick w">W</span>
+                <i class="compass-ring"></i>
+                <i class="needle" id="needle"></i>
+                <b class="compass-center"></b>
+              </div>
+              <div class="bearing-value"><small>BEARING</small><strong id="bearingValue">000°</strong></div>
+            </div>
+            <div class="bearing-input">
+              <label class="range-label" for="bearingRange"><span>天线方向</span><b id="bearingSector">正北</b></label>
+              <input class="range" id="bearingRange" type="range" min="0" max="359" step="1" value="0" aria-label="天线方向">
+            </div>
+          </div>
+
+          <div class="control-divider"></div>
+          <div class="gain-control">
+            <label class="range-label" for="gainRange"><span>前端增益</span><b id="gainValue">48%</b></label>
+            <input class="range range-gain" id="gainRange" type="range" min="0" max="100" step="1" value="48" aria-label="前端增益">
+            <div class="gain-scale"><span>安静</span><span>推荐 35–72</span><span>削波</span></div>
+            <div class="meter-row">
+              <span>S</span>
+              <div class="segments" id="sMeter"></div>
+              <b id="snrValue">--</b>
+            </div>
+            <div class="clip-warning" id="clipWarning"><i></i>前端过载 · 解码失真</div>
+          </div>
+        </section>
+
+        <section class="panel lock-panel" id="lockPanel" data-state="idle">
+          <div class="lock-top">
+            <span class="lock-orbit"><i></i></span>
+            <div>
+              <span class="eyebrow" id="lockKicker">NO CARRIER</span>
+              <strong id="lockName">等待载波</strong>
+              <small id="lockMeta">调谐至活动峰值，并缓慢旋转天线</small>
+            </div>
+          </div>
+          <div class="lock-bar"><i id="lockProgress"></i></div>
+          <button class="record-btn" id="recordBtn" type="button" disabled>写入推断序列</button>
+        </section>
+
+        <section class="panel answer-panel">
+          <div class="panel-heading">
+            <div><span class="eyebrow">INFERENCE</span><h2>推断序列</h2></div>
+            <span class="count-badge" id="answerCount">0/3</span>
+          </div>
+          <div class="answer-slots">
+            <label><span>01</span><select id="answer0" aria-label="第 1 位信标"><option value="">选择信标</option></select><i></i></label>
+            <label><span>02</span><select id="answer1" aria-label="第 2 位信标"><option value="">选择信标</option></select><i></i></label>
+            <label><span>03</span><select id="answer2" aria-label="第 3 位信标"><option value="">选择信标</option></select><i></i></label>
+          </div>
+          <p class="answer-hint">按信标在一个发报周期内首次出现的先后排序。</p>
+        </section>
+      </aside>
+    </main>
+
+    <footer class="transport">
+      <div class="transport-left">
+        <button class="btn btn-primary" id="startBtn" type="button"><i class="play-icon"></i><span>开始监听</span></button>
+        <button class="btn" id="pauseBtn" type="button" disabled><i class="pause-icon"></i>暂停</button>
+        <button class="btn btn-ghost" id="restartBtn" type="button"><i class="restart-icon"></i>同 seed 重开</button>
+      </div>
+      <div class="transport-message" id="transportMessage"><i></i><span>建议佩戴耳机 · 点击开始后才会产生声音</span></div>
+      <button class="btn btn-submit" id="submitBtn" type="button">提交结论 <span>↗</span></button>
+    </footer>
+  </div>
+
+  <div class="modal-backdrop" id="helpModal" hidden>
+    <section class="modal help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <button class="modal-close" data-close="helpModal" type="button" aria-label="关闭">×</button>
+      <span class="eyebrow">FIELD MANUAL / 07</span>
+      <h2 id="helpTitle">监听方法</h2>
+      <div class="help-grid">
+        <article><b>01 / 找载波</b><p>点击频谱峰值或拖动频率游标。只有调进窄带内的信号会被解调。</p></article>
+        <article><b>02 / 定方向</b><p>真实信标对天线方向敏感。缓慢转动罗盘，寻找 S 表明显抬升的角度。</p></article>
+        <article><b>03 / 控增益</b><p>增益过低无法解码；超过 72% 会削波并制造谐波。保持窄带、方向峰值与无过载。</p></article>
+        <article><b>04 / 辨干扰</b><p>邻频干扰通常带对称边带，并且转动天线时强度变化迟钝。呼号可能被伪装。</p></article>
+      </div>
+      <div class="help-note">暂停与同 seed 重开不会改变信号内容。真实参数只在提交后揭示。</div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="submitModal" hidden>
+    <section class="modal submit-modal" role="dialog" aria-modal="true" aria-labelledby="submitTitle">
+      <button class="modal-close" data-close="submitModal" type="button" aria-label="关闭">×</button>
+      <span class="eyebrow">FINAL TRANSMISSION</span>
+      <h2 id="submitTitle">确认提交推断？</h2>
+      <p class="modal-copy">提交后将停止监听并揭示真实信标、载波频段和发报窗口。这个动作不能撤回。</p>
+      <div class="submit-order" id="submitOrder"></div>
+      <div class="penalty-rules">
+        <span>误差规则 / 固定</span>
+        <p>声源未命中 <b>−20</b> · 位置错位 <b>−10</b> · 重复记录 <b>−10</b> · 空缺 <b>−20</b></p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close="submitModal" type="button">返回监听</button>
+        <button class="btn btn-primary" id="confirmSubmitBtn" type="button">确认并结算</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop result-backdrop" id="resultModal" hidden>
+    <section class="modal result-modal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <div id="resultContent"></div>
+    </section>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
