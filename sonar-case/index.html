@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>潜航声呐调查案</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>潜航声呐调查案</h1>
+      <div class="controls">
+        <label>
+          案件 seed
+          <input id="seed-input" type="text" value="abyss-771" />
+        </label>
+        <button id="btn-start">开始</button>
+        <button id="btn-pause" disabled>暂停</button>
+        <button id="btn-resume" disabled>继续</button>
+        <button id="btn-reopen">同 seed 重开</button>
+        <button id="btn-submit" disabled>提交结论</button>
+      </div>
+      <div id="status-line" class="status">状态：待开始</div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>海图（调查阶段不显示暗礁与信标）</h2>
+        <canvas id="map-canvas" width="460" height="460"></canvas>
+        <div class="dpad">
+          <button data-dir="NW">↖</button>
+          <button data-dir="N">↑</button>
+          <button data-dir="NE">↗</button>
+          <button data-dir="W">←</button>
+          <button data-dir="S">↓</button>
+          <button data-dir="E">→</button>
+          <button data-dir="SW">↙</button>
+          <button data-dir="SE">↘</button>
+        </div>
+        <div class="actions">
+          <button id="btn-scan">主动声呐扫描 (-4)</button>
+          <button id="btn-listen">水听器监听 (-3)</button>
+          <button id="btn-mark">标记相邻格为暗礁 (-10 若错)</button>
+        </div>
+        <p class="hint">键盘：WASD/方向键移动；点海图格子标记；点日志条目重播。</p>
+      </section>
+
+      <section class="panel">
+        <h2>波形与资源</h2>
+        <canvas id="gauge-canvas" width="460" height="120"></canvas>
+        <canvas id="wave-canvas" width="460" height="180"></canvas>
+        <div id="wave-meta" class="wave-meta">尚未选择线索</div>
+        <h3>线索日志（点击重播，内容不会改变）</h3>
+        <ul id="log-list" class="log-list"></ul>
+        <h3>事件</h3>
+        <ul id="event-list" class="event-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>推断结论</h2>
+        <form id="verdict-form">
+          <fieldset>
+            <legend>暗礁（点海图相邻格标记后选择，或直接填坐标）</legend>
+            <label>x <input id="reef-x" type="number" min="0" max="9" /></label>
+            <label>y <input id="reef-y" type="number" min="0" max="9" /></label>
+          </fieldset>
+          <fieldset>
+            <legend>最近信标所属频段</legend>
+            <select id="band-select">
+              <option value="">请选择</option>
+            </select>
+          </fieldset>
+          <fieldset>
+            <legend>海流方向</legend>
+            <select id="current-select">
+              <option value="">请选择</option>
+            </select>
+          </fieldset>
+        </form>
+        <div id="settlement" class="settlement hidden"></div>
+      </section>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

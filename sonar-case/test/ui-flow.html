@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>ui-flow</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body>
+    <div id="flow-out">running</div>
+    <iframe id="app" src="../index.html" width="1400" height="1000"></iframe>
+    <script>
+      const out = document.getElementById('flow-out');
+      const frame = document.getElementById('app');
+      frame.addEventListener('load', () => setTimeout(run, 300));
+
+      async function run() {
+        const doc = frame.contentDocument;
+        const win = frame.contentWindow;
+        const click = (id) => doc.getElementById(id).click();
+        const results = [];
+        const check = (name, cond) => results.push({ name, ok: Boolean(cond) });
+
+        click('btn-start');
+        check('开始后进入调查状态', doc.getElementById('status-line').textContent.includes('调查中'));
+        click('btn-scan');
+        click('btn-listen');
+        check('产生两条线索日志', doc.querySelectorAll('#log-list li').length === 2);
+        const firstLog = doc.querySelector('#log-list li').textContent;
+
+        // 重播不改变日志数量与内容
+        doc.querySelector('#log-list li').click();
+        check('重播不新增日志', doc.querySelectorAll('#log-list li').length === 2);
+        check('重播内容不变', doc.querySelector('#log-list li').textContent === firstLog);
+
+        // 暂停冻结
+        click('btn-pause');
+        check('暂停状态显示', doc.getElementById('status-line').textContent.includes('暂停'));
+        click('btn-scan');
+        check('暂停时日志不增加', doc.querySelectorAll('#log-list li').length === 2);
+        click('btn-resume');
+
+        // 错误标记固定扣 10
+        const energyTextBefore = doc.getElementById('status-line').textContent;
+        doc.getElementById('reef-x').value = 0;
+        doc.getElementById('reef-y').value = 0;
+        click('btn-mark');
+        check('错误标记后出现标记圆点', doc.querySelectorAll('#map-canvas').length === 1);
+
+        // 提交错误结论 -> 结算表与错误维度
+        doc.getElementById('band-select').selectedIndex = 1;
+        doc.getElementById('current-select').selectedIndex = 1;
+        click('btn-submit');
+        const settlement = doc.getElementById('settlement');
+        check('结算面板出现且含表格', !settlement.classList.contains('hidden') && settlement.querySelectorAll('tr').length >= 4);
+        check('结算展示错误维度', settlement.textContent.includes('错误维度'));
+        check('结算并列证据(声源/时间)', /Hz|s）/.test(settlement.textContent));
+
+        // 同 seed 重开：线索顺序一致
+        click('btn-reopen');
+        click('btn-scan');
+        click('btn-listen');
+        check('同 seed 重开首条日志一致', doc.querySelector('#log-list li').textContent === firstLog);
+
+        const failed = results.filter((r) => !r.ok);
+        out.textContent = (failed.length ? 'FAIL' : 'PASS') + ' ' +
+          results.map((r) => `${r.name}=${r.ok}`).join('; ');
+        win.__flowDone = true;
+      }
+    </script>
+  </body>
+</html>

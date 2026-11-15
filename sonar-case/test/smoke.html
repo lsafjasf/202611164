@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head><meta charset="utf-8" /><title>smoke</title></head>
+  <body>
+    <div id="out">running</div>
+    <script type="module">
+      import * as engine from '../js/engine.js';
+      import { CONFIG } from '../js/config.js';
+
+      const results = [];
+      const check = (name, cond) => results.push({ name, ok: Boolean(cond) });
+
+      // 引擎级端到端流程
+      const g = engine.startGame(engine.createGame('ui-smoke'));
+      engine.scan(g);
+      engine.listen(g);
+      const pub = engine.publicState(g);
+      check('公开状态无 truth', !JSON.stringify(pub).includes('truth'));
+      check('已有扫描+监听两条日志', g.log.length === 2);
+
+      // 正确结论
+      g.collected = g.map.beacons.map((b) => b.id);
+      g.returned = true;
+      g.sub = { ...g.map.home };
+      const near = g.map.beacons
+        .map((b) => ({ b, d: Math.hypot(b.x - g.sub.x, b.y - g.sub.y) }))
+        .sort((p, q) => p.d - q.d)[0].b;
+      const okVerdict = engine.submitConclusions(g, {
+        reef: { x: g.map.reefs[0].x, y: g.map.reefs[0].y },
+        bandId: near.bandId,
+        currentDirId: g.map.current.dirId,
+      });
+      check('正确结论全对', okVerdict.verdict.allJudgmentsCorrect);
+
+      // 错误结论含具体维度
+      const g2 = engine.startGame(engine.createGame('ui-smoke'));
+      engine.scan(g2);
+      engine.listen(g2);
+      const wrongDir = CONFIG.dirs.find((d) => d.id !== g2.map.current.dirId).id;
+      const wrongBand = CONFIG.bands.find((b) => b.id !== g2.map.beacons[0].bandId).id;
+      const bad = engine.submitConclusions(g2, {
+        reef: { x: 0, y: 0 },
+        bandId: wrongBand,
+        currentDirId: wrongDir,
+      });
+      check('错误结论包含错误维度', bad.verdict.judgments.every((j) => j.errorDim));
+
+      // 同 seed 复现
+      const a = engine.startGame(engine.createGame('rep'));
+      engine.scan(a); engine.listen(a); engine.move(a, 'E');
+      const b = engine.startGame(engine.createGame('rep'));
+      engine.scan(b); engine.listen(b); engine.move(b, 'E');
+      check('同 seed 线索完全一致', JSON.stringify(a.log) === JSON.stringify(b.log));
+
+      // 暂停冻结
+      engine.pauseGame(b);
+      check('暂停时动作被拒绝', engine.scan(b).ok === false && engine.move(b, 'N').ok === false);
+
+      const failed = results.filter((r) => !r.ok);
+      document.getElementById('out').textContent =
+        (failed.length ? 'FAIL' : 'PASS') + ' ' + results.map((r) => `${r.name}=${r.ok}`).join('; ');
+      window.__smokeDone = true;
+    </script>
+  </body>
+</html>
