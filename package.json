@@ -1,0 +1,12 @@
+{
+  "name": "deterministic-vegetation-generator",
+  "version": "1.0.0",
+  "description": "Seed-deterministic terrain/vegetation/road generator on Canvas",
+  "private": true,
+  "scripts": {
+    "test": "node test/verify.js",
+    "test:dom": "node test/smoke-dom.js",
+    "test:interact": "node test/interact.js",
+    "screenshot": "node test/screenshot.js"
+  }
+}

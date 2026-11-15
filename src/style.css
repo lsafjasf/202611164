@@ -1,0 +1,87 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #101612;
+  color: #dfe8dd;
+}
+header {
+  padding: 14px 22px;
+  background: #18221b;
+  border-bottom: 1px solid #2a3a2f;
+}
+h1 { margin: 0; font-size: 19px; }
+h1 .sub { font-size: 12px; color: #8aa28c; margin-left: 10px; font-weight: 400; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #9db89f; margin: 18px 0 8px; }
+main {
+  display: grid;
+  grid-template-columns: 250px 1fr 260px;
+  gap: 16px;
+  padding: 16px;
+  align-items: start;
+}
+.panel {
+  background: #162019;
+  border: 1px solid #2a3a2f;
+  border-radius: 10px;
+  padding: 14px;
+}
+label { display: block; font-size: 12px; margin: 8px 0; color: #b9cbb8; }
+label span { float: right; color: #7fd48a; font-variant-numeric: tabular-nums; }
+input[type="number"] {
+  width: 100%;
+  margin-top: 4px;
+  background: #0e1610;
+  color: #dfe8dd;
+  border: 1px solid #33473a;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+input[type="range"] { width: 100%; margin-top: 4px; accent-color: #5fbf6c; }
+button {
+  background: #223327;
+  color: #dfe8dd;
+  border: 1px solid #38503f;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+button:hover { background: #2c4233; }
+button.primary { width: 100%; margin-top: 8px; background: #2e6b38; border-color: #479153; }
+button.active { background: #3d7a47; border-color: #6cc278; }
+.row { display: flex; gap: 6px; margin: 6px 0; flex-wrap: wrap; }
+.row button { flex: 1; }
+.stage { text-align: center; }
+canvas {
+  background: #0b110d;
+  border: 1px solid #2a3a2f;
+  border-radius: 10px;
+  max-width: 100%;
+  cursor: crosshair;
+}
+.status {
+  margin-top: 10px;
+  min-height: 42px;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #cfe0cd;
+  background: #162019;
+  border: 1px solid #2a3a2f;
+  border-radius: 8px;
+  padding: 8px 12px;
+  white-space: pre-wrap;
+}
+.status.error { border-color: #b25b49; color: #f0b4a6; }
+.status.ok { border-color: #479153; }
+#summary dl { margin: 0; font-size: 12px; line-height: 1.7; }
+#summary dt { color: #8aa28c; margin-top: 8px; }
+#summary dd { margin: 0 0 4px; font-variant-numeric: tabular-nums; }
+#summary .hash {
+  font-family: ui-monospace, monospace;
+  color: #7fd48a;
+  word-break: break-all;
+}
+#summary ul { padding-left: 16px; margin: 6px 0; font-size: 11px; color: #a9bfa8; }
+#summary li { margin: 4px 0; }

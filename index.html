@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>确定性植被生成器</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <header>
+    <h1>确定性植被生成器 <span class="sub">地形 · 湿度 · 风向 · 可拖动道路</span></h1>
+  </header>
+  <main>
+    <section class="panel">
+      <h2>生成</h2>
+      <label>Seed
+        <input id="seedInput" type="number" value="1337" min="0" step="1">
+      </label>
+      <button id="regenBtn" class="primary">显式重新生成</button>
+      <div class="row">
+        <button data-seed="1337">seed 1337</button>
+        <button data-seed="20261116">seed 20261116</button>
+      </div>
+
+      <h2>规则参数</h2>
+      <label>水面阈值 <span id="waterLevelVal"></span>
+        <input id="waterLevel" type="range" min="0.25" max="0.45" step="0.01" value="0.32">
+      </label>
+      <label>树林密度 <span id="treeDensityVal"></span>
+        <input id="treeDensity" type="range" min="0" max="1" step="0.05" value="0.8">
+      </label>
+      <label>灌木密度 <span id="shrubDensityVal"></span>
+        <input id="shrubDensity" type="range" min="0" max="1" step="0.05" value="0.7">
+      </label>
+      <label>草地密度 <span id="grassDensityVal"></span>
+        <input id="grassDensity" type="range" min="0" max="1" step="0.05" value="0.8">
+      </label>
+      <label>风向 <span id="windDirVal"></span>
+        <input id="windDirDeg" type="range" min="0" max="359" step="1" value="270">
+      </label>
+      <label>风力 <span id="windStrengthVal"></span>
+        <input id="windStrength" type="range" min="0" max="1" step="0.05" value="0.6">
+      </label>
+      <button id="applyParams">应用参数（局部重算）</button>
+
+      <h2>季节（仅外观）</h2>
+      <div class="row" id="seasonRow">
+        <button data-season="spring">春</button>
+        <button data-season="summer" class="active">夏</button>
+        <button data-season="autumn">秋</button>
+        <button data-season="winter">冬</button>
+      </div>
+
+      <h2>工具</h2>
+      <div class="row" id="toolRow">
+        <button data-tool="road" class="active">拖道路</button>
+        <button data-tool="tree">加树</button>
+        <button data-tool="remove">删对象</button>
+      </div>
+      <div class="row">
+        <button id="saveBtn">保存参数</button>
+        <button id="loadBtn">载入参数</button>
+      </div>
+      <button id="selftestBtn">运行内置自检</button>
+    </section>
+
+    <section class="stage">
+      <canvas id="scene" width="768" height="512"></canvas>
+      <div id="status" class="status"></div>
+    </section>
+
+    <aside class="panel" id="summary"></aside>
+  </main>
+  <script src="src/engine.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
