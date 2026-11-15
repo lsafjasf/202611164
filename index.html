@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>金属齿音乐盒 · Metal Tooth Music Box</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>金属齿音乐盒</h1>
+  <div class="transport" id="transport">
+    <button id="btnPlay" class="primary">▶ 播放</button>
+    <button id="btnPause">⏸ 暂停</button>
+    <button id="btnStop">⏹ 停止</button>
+    <label class="chk"><input type="checkbox" id="chkLoop" checked /> 循环</label>
+    <label class="slider">发条速度
+      <input type="range" id="rngSpeed" min="0.5" max="3" step="0.05" value="1" />
+      <span id="lblSpeed">1.00×</span>
+    </label>
+    <label class="slider">BPM
+      <input type="range" id="rngBpm" min="40" max="220" step="1" value="100" />
+      <span id="lblBpm">100</span>
+    </label>
+  </div>
+  <div class="actions">
+    <button id="btnSave">💾 保存工程</button>
+    <button id="btnLoad">📂 载入工程</button>
+    <input type="file" id="fileLoad" accept=".json,application/json" hidden />
+    <button id="btnExport">🎵 导出 WAV</button>
+    <button id="btnReloadCheck" class="warn">🔄 保存并刷新对照</button>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="stage">
+    <div class="trackheads" id="trackHeads"></div>
+    <div class="canvas-wrap">
+      <canvas id="score" canvas-id="score" width="960" height="300"></canvas>
+      <div class="trash" id="trash">🗑 拖到此处删除</div>
+    </div>
+    <canvas id="cylinder" width="960" height="170"></canvas>
+    <div class="palette" id="palette"></div>
+  </section>
+
+  <aside class="sidebar">
+    <h2>工程参数</h2>
+    <div id="trackEditors"></div>
+    <h2>自检报告 <button id="btnRunCheck" class="mini">重新运行</button></h2>
+    <div id="report" class="report"></div>
+    <h2>图例</h2>
+    <ul class="legend">
+      <li><span class="dot ok"></span>正常发音</li>
+      <li><span class="dot masked"></span>密集掩蔽（衰减）</li>
+      <li><span class="dot leaked"></span>高速漏音（被跳过）</li>
+    </ul>
+  </aside>
+</main>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "uid782",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u00002\u00000\u00002\u00006\u00001\u00001\u00001\u00006\u00004\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --test test/selftest.test.mjs",
+    "test:e2e": "playwright test",
+    "start": "PORT=43219 node tools/static-server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsafjasf/202611164.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/lsafjasf/202611164/issues"
+  },
+  "homepage": "https://github.com/lsafjasf/202611164#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "playwright": "^1.65.1"
+  }
+}
