@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>回声迷宫 · Echo Maze</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>回声迷宫 <small>Echo Maze — 不可见迷宫声学导航</small></h1>
+  </header>
+
+  <main>
+    <section id="transport" class="panel">
+      <h2>走带控制</h2>
+      <div class="row">
+        <button id="btn-play">▶ 播放</button>
+        <button id="btn-pause" disabled>⏸ 暂停</button>
+        <button id="btn-stop" disabled>⏹ 停止</button>
+        <label class="chk"><input type="checkbox" id="chk-loop"> 循环</label>
+      </div>
+      <div class="row">
+        <label>速度 <span id="speed-val">1.00×</span>
+          <input type="range" id="rng-speed" min="0.5" max="2" step="0.05" value="1">
+        </label>
+        <label>变调 <span id="pitch-val">0</span> 半音
+          <input type="range" id="rng-pitch" min="-12" max="12" step="1" value="0">
+        </label>
+      </div>
+      <div class="row">
+        <button id="btn-save">💾 保存工程</button>
+        <button id="btn-load">📂 重新载入</button>
+        <button id="btn-export">⬇ 导出 WAV</button>
+        <button id="btn-selftest">🧪 完整示例 + 重载对比</button>
+      </div>
+      <div class="row beat-row">
+        <span id="beat-lamp" class="lamp"></span>
+        <span id="beat-pos">节拍: --</span>
+        <span id="audio-state">AudioContext: --</span>
+      </div>
+    </section>
+
+    <section id="game" class="panel">
+      <h2>迷宫导航（不可见）</h2>
+      <div class="row">
+        <span>深度 <b id="ui-depth">0</b> / 6</span>
+        <span>检查点 <span id="ui-checkpoints">○ ○ ○</span></span>
+        <span>噪声 <meter id="ui-noise" min="0" max="1" value="0"></meter></span>
+        <span>探针 <b id="ui-probes">2</b></span>
+      </div>
+      <div class="row">
+        <button id="btn-left" disabled>← 左出口</button>
+        <button id="btn-right" disabled>右出口 →</button>
+        <button id="btn-back" disabled>↩ 后退</button>
+        <button id="btn-probe" disabled>📡 放置探针</button>
+      </div>
+      <div class="row">
+        <canvas id="echo-canvas" width="560" height="120"></canvas>
+      </div>
+      <div class="row">
+        <button id="btn-submit" disabled>✅ 通过 3 个检查点后提交路径</button>
+        <button id="btn-newgame">🔄 新迷宫</button>
+      </div>
+      <div id="game-log" class="log"></div>
+    </section>
+
+    <section id="tracks" class="panel">
+      <h2>音轨参数（随工程保存）</h2>
+      <table id="track-table">
+        <thead><tr><th>音轨</th><th>增益</th><th>参数</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="verify" class="panel">
+      <h2>重载前后对比</h2>
+      <div id="verify-result">尚未运行。点击「完整示例 + 重载对比」。</div>
+    </section>
+
+    <section id="route" class="panel hidden">
+      <h2>提交结果 · 路线回放</h2>
+      <canvas id="route-canvas" width="560" height="320"></canvas>
+      <div id="route-stats"></div>
+    </section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
