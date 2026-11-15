@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090b0f" />
+    <title>POLYGRID 04 — Sixteen-step drum machine</title>
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Polygrid home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>POLYGRID</span>
+          <b>04</b>
+        </a>
+
+        <div class="transport" role="group" aria-label="Transport">
+          <button class="icon-button play" id="playButton" aria-label="播放" title="播放 (Space)">
+            <span class="play-icon" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button" id="pauseButton" aria-label="暂停" title="暂停">
+            <span class="pause-icon" aria-hidden="true"></span>
+          </button>
+          <button class="icon-button" id="stopButton" aria-label="停止" title="停止并回到开头">
+            <span class="stop-icon" aria-hidden="true"></span>
+          </button>
+          <button class="loop-button active" id="loopButton" aria-pressed="true" title="循环播放">
+            <span class="loop-glyph" aria-hidden="true">↻</span> LOOP
+          </button>
+        </div>
+
+        <div class="tempo-block">
+          <button class="nudge" id="bpmDown" aria-label="降低速度">−</button>
+          <label class="tempo-readout" for="bpmSlider">
+            <strong id="bpmValue">112</strong>
+            <span>BPM</span>
+          </label>
+          <input id="bpmSlider" class="tempo-slider" type="range" min="60" max="180" step="1" value="112" aria-label="速度" />
+          <button class="nudge" id="bpmUp" aria-label="提高速度">+</button>
+        </div>
+
+        <div class="master-block">
+          <span>MASTER</span>
+          <input id="masterGain" type="range" min="0" max="1.2" step="0.01" value="0.82" aria-label="总音量" />
+          <output id="masterValue">82</output>
+        </div>
+
+        <div class="header-actions">
+          <button class="text-button" id="saveButton"><span>●</span> 保存工程</button>
+          <button class="text-button" id="jsonSaveButton">JSON ↓</button>
+          <button class="text-button" id="loadButton">载入</button>
+          <input id="fileInput" type="file" accept="application/json,.json" hidden />
+        </div>
+      </header>
+
+      <main class="main-grid">
+        <section class="sequencer-panel" aria-label="音序器">
+          <div class="panel-heading">
+            <div>
+              <div class="eyebrow">PATTERN <span class="status-dot"></span> <span id="patternStatus">STOPPED</span></div>
+              <h1>NEON <em>BREAK</em></h1>
+            </div>
+            <div class="pattern-meta">
+              <span>16 STEPS</span>
+              <span>4 TRACKS</span>
+              <span>4/4</span>
+            </div>
+            <div class="pattern-actions">
+              <button class="chip-button" id="copyPatternButton">复制节奏</button>
+              <button class="chip-button" id="pastePatternButton">粘贴</button>
+              <button class="accent-button" id="exportButton"><span class="download-icon">↓</span> 导出 WAV</button>
+            </div>
+          </div>
+
+          <div class="sequencer-frame">
+            <canvas id="sequencerCanvas" aria-label="十六步四轨音序网格"></canvas>
+          </div>
+          <div class="meter-frame">
+            <canvas id="meterCanvas" aria-label="四轨及总输出电平"></canvas>
+          </div>
+          <div class="transport-strip">
+            <div class="beat-display">
+              <span>POSITION</span>
+              <strong id="beatReadout">01<span>.</span>1<span>.</span>01</strong>
+            </div>
+            <div class="pitch-display">
+              <span>LAST TRIGGER / PITCH</span>
+              <strong id="pitchReadout">KICK · C2</strong>
+            </div>
+            <div class="audio-state">
+              <span class="audio-led" id="audioLed"></span>
+              <span id="audioStateText">AUDIO READY</span>
+            </div>
+            <div class="grid-hint">单击开关 · 双击编辑 · 拖动批改</div>
+          </div>
+        </section>
+
+        <aside class="inspector" aria-label="步进与轨道参数">
+          <div class="inspector-head">
+            <div>
+              <span class="eyebrow">STEP INSPECTOR</span>
+              <h2 id="stepTitle">KICK / 01</h2>
+            </div>
+            <button class="power-toggle active" id="stepToggle" aria-pressed="true" aria-label="切换当前步进">
+              <span></span>
+            </button>
+          </div>
+
+          <div class="parameter-group">
+            <label class="parameter-row" for="velocityControl">
+              <span>力度 <small>VELOCITY</small></span>
+              <output id="velocityValue">112</output>
+            </label>
+            <input id="velocityControl" type="range" min="1" max="127" step="1" value="112" />
+
+            <label class="parameter-row" for="probabilityControl">
+              <span>概率 <small>PROBABILITY</small></span>
+              <output id="probabilityValue">100%</output>
+            </label>
+            <input id="probabilityControl" type="range" min="0" max="100" step="1" value="100" />
+
+            <label class="parameter-row" for="panControl">
+              <span>声像 <small>PAN</small></span>
+              <output id="panValue">C</output>
+            </label>
+            <input id="panControl" type="range" min="-100" max="100" step="1" value="0" />
+            <div class="pan-ticks" aria-hidden="true"><span>L</span><span>C</span><span>R</span></div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="track-heading">
+            <span class="eyebrow">TRACK VOICE</span>
+            <div class="track-tabs" id="trackTabs" role="tablist">
+              <button class="track-tab active" data-track="0" style="--track:#ff6a3d">K</button>
+              <button class="track-tab" data-track="1" style="--track:#ffce5c">S</button>
+              <button class="track-tab" data-track="2" style="--track:#6ee7bf">H</button>
+              <button class="track-tab" data-track="3" style="--track:#8da8ff">P</button>
+            </div>
+          </div>
+
+          <div class="voice-readout">
+            <span class="voice-led" id="voiceLed" style="--track:#ff6a3d"></span>
+            <span id="trackName">KICK</span>
+            <code id="trackNote">C2</code>
+          </div>
+
+          <div class="parameter-group compact">
+            <label class="parameter-row" for="tuneControl">
+              <span>音高 <small>TUNE</small></span>
+              <output id="tuneValue">+0 st</output>
+            </label>
+            <input id="tuneControl" type="range" min="-12" max="12" step="1" value="0" />
+
+            <label class="parameter-row" for="decayControl">
+              <span>衰减 <small>DECAY</small></span>
+              <output id="decayValue">0.36s</output>
+            </label>
+            <input id="decayControl" type="range" min="0.05" max="1.2" step="0.01" value="0.36" />
+
+            <label class="parameter-row" for="toneControl">
+              <span>音色 <small>TONE</small></span>
+              <output id="toneValue">62%</output>
+            </label>
+            <input id="toneControl" type="range" min="0" max="1" step="0.01" value="0.62" />
+
+            <label class="parameter-row" for="trackGainControl">
+              <span>轨道增益 <small>GAIN</small></span>
+              <output id="trackGainValue">0.86</output>
+            </label>
+            <input id="trackGainControl" type="range" min="0" max="1.5" step="0.01" value="0.86" />
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="global-params">
+            <label class="parameter-row" for="transposeControl">
+              <span>全局变调 <small>TRANSPOSE</small></span>
+              <output id="transposeValue">0 st</output>
+            </label>
+            <input id="transposeControl" type="range" min="-12" max="12" step="1" value="0" />
+          </div>
+
+          <div class="inspector-actions">
+            <button class="secondary-button" id="clearStepButton">清空当前轨</button>
+            <button class="secondary-button" id="resetDemoButton">载入示例</button>
+          </div>
+        </aside>
+      </main>
+
+      <section class="audit-panel" aria-label="时序校验">
+        <div class="audit-heading">
+          <div>
+            <span class="eyebrow">TIMING LAB / CLOSED-LOOP CHECK</span>
+            <h2>首轮 vs. 重载</h2>
+          </div>
+          <button class="chip-button" id="auditButton">运行闭环校验</button>
+        </div>
+        <div class="audit-grid" id="auditGrid">
+          <div class="audit-metric">
+            <span>音符数量</span>
+            <strong id="noteCountMetric">—</strong>
+            <small id="noteCountDetail">等待校验</small>
+          </div>
+          <div class="audit-metric">
+            <span>节拍位置</span>
+            <strong id="beatMetric">—</strong>
+            <small id="beatDetail">等待校验</small>
+          </div>
+          <div class="audit-metric">
+            <span>导出时长</span>
+            <strong id="durationMetric">—</strong>
+            <small id="durationDetail">等待校验</small>
+          </div>
+          <div class="audit-metric">
+            <span>暂停 / 恢复偏移</span>
+            <strong id="pauseMetric">—</strong>
+            <small id="pauseDetail">等待校验</small>
+          </div>
+        </div>
+        <div class="audit-log" id="auditLog">准备运行：将比较首轮工程与 JSON 重载工程。</div>
+      </section>
+
+      <footer class="footer">
+        <span>POLYGRID 04 / WEB AUDIO SYNTHESIS</span>
+        <span>SPACE 播放/暂停 · ESC 停止 · 数字键选择轨道</span>
+        <span id="saveState">LOCAL PROJECT READY</span>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
