@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>精灵图集增量打包工具</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>精灵图集增量打包工具</h1>
+    <p class="hint">新增/删除少量帧不会整体重排；只有点击“紧凑重排”才会全量布局。</p>
+  </header>
+
+  <section id="stats" aria-label="统计指标">
+    <div class="stat"><span class="k">当前模式</span><span class="v" id="st-mode">增量</span></div>
+    <div class="stat"><span class="k">利用率</span><span class="v" id="st-util">0%</span></div>
+    <div class="stat"><span class="k">重排次数</span><span class="v" id="st-repack">0</span></div>
+    <div class="stat"><span class="k">帧数</span><span class="v" id="st-frames">0</span></div>
+    <div class="stat"><span class="k">图集尺寸</span><span class="v" id="st-size">1024×1024</span></div>
+    <div class="stat"><span class="k">显存估算</span><span class="v" id="st-mem">4.0 MB</span></div>
+    <div class="stat"><span class="k">最近操作耗时</span><span class="v" id="st-lastms">0 ms</span></div>
+    <div class="stat"><span class="k">累计打包耗时</span><span class="v" id="st-totalms">0 ms</span></div>
+  </section>
+
+  <section id="controls">
+    <button id="btn-add">添加 8 帧</button>
+    <button id="btn-remove">删除选中帧</button>
+    <button id="btn-repack">紧凑重排</button>
+    <button id="btn-export">导出 JSON</button>
+    <label class="import-label">导入 JSON
+      <input type="file" id="file-import" accept=".json,application/json">
+    </label>
+  </section>
+
+  <main>
+    <canvas id="atlas-canvas" width="1024" height="1024"></canvas>
+    <aside>
+      <h2>帧列表</h2>
+      <ul id="frame-list"></ul>
+    </aside>
+  </main>
+
+  <section id="recovery" class="hidden" aria-live="polite">
+    <strong>恢复建议：</strong><span id="recovery-text"></span>
+  </section>
+
+  <section id="errors">
+    <h2>错误日志（<span id="err-count">0</span>）</h2>
+    <ul id="error-list"></ul>
+  </section>
+
+  <script src="src/packer.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

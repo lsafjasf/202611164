@@ -1,0 +1,25 @@
+* { box-sizing: border-box; }
+body { font-family: system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; padding: 16px; background: #1e1f24; color: #e6e6e6; }
+header h1 { font-size: 20px; margin: 0 0 4px; }
+.hint { color: #9aa0a6; font-size: 13px; margin: 0 0 12px; }
+#stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.stat { background: #2a2c33; border-radius: 6px; padding: 8px 12px; min-width: 110px; }
+.stat .k { display: block; font-size: 11px; color: #9aa0a6; }
+.stat .v { font-size: 16px; font-weight: 600; }
+#controls { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+button, .import-label { background: #3b82f6; color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-size: 14px; }
+button:hover, .import-label:hover { background: #2563eb; }
+#import-label input { display: none; }
+.import-label input { display: none; }
+main { display: flex; gap: 16px; align-items: flex-start; }
+#atlas-canvas { width: 512px; height: 512px; background: #141519; border: 1px solid #3a3d45; image-rendering: pixelated; cursor: crosshair; }
+aside { width: 260px; max-height: 512px; overflow: auto; background: #2a2c33; border-radius: 6px; padding: 8px 12px; }
+aside h2, #errors h2 { font-size: 14px; margin: 4px 0 8px; }
+#frame-list { list-style: none; margin: 0; padding: 0; font-size: 12px; }
+#frame-list li { padding: 3px 6px; border-radius: 4px; cursor: pointer; font-family: ui-monospace, monospace; }
+#frame-list li.selected { background: #3b82f6; }
+#recovery { background: #4a3b12; border: 1px solid #a16207; border-radius: 6px; padding: 10px 12px; margin-top: 12px; font-size: 13px; }
+#recovery.hidden { display: none; }
+#errors { margin-top: 12px; background: #2a2c33; border-radius: 6px; padding: 8px 12px; max-height: 220px; overflow: auto; }
+#error-list { list-style: none; margin: 0; padding: 0; font-size: 12px; font-family: ui-monospace, monospace; }
+#error-list li { padding: 4px 0; border-bottom: 1px solid #3a3d45; color: #f0a3a3; }

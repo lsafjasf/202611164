@@ -1,0 +1,10 @@
+{
+  "name": "sprite-atlas-incremental",
+  "version": "1.0.0",
+  "private": true,
+  "description": "增量式精灵图集打包工具：少量帧增删不触发整体重排",
+  "scripts": {
+    "test": "node test/run-tests.js && node test/ui-smoke.js",
+    "serve": "python3 -m http.server 8000"
+  }
+}
