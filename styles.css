@@ -1,0 +1,120 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: #0b0e14;
+  color: #d7dce6;
+  line-height: 1.5;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #141a26, #0e1320);
+  border-bottom: 1px solid #232b3b;
+}
+h1 { margin: 0 0 4px; font-size: 22px; }
+h2 { font-size: 15px; margin: 0 0 12px; color: #9fb2d3; }
+h3 { font-size: 14px; margin: 0 0 8px; }
+.sub { margin: 0; color: #8b93a7; font-size: 13px; }
+.case-meta { text-align: right; }
+.case-meta input {
+  background: #10141c;
+  border: 1px solid #2c3444;
+  color: #d7dce6;
+  border-radius: 6px;
+  padding: 6px 10px;
+  width: 180px;
+  font-family: monospace;
+}
+.meta-row { margin-top: 8px; display: flex; gap: 10px; justify-content: flex-end; }
+.badge {
+  background: #1d2738;
+  border: 1px solid #33415c;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+.timer { font-family: monospace; font-size: 16px; color: #58a6ff; }
+main { max-width: 1080px; margin: 20px auto 48px; padding: 0 16px; }
+.panel {
+  background: #121722;
+  border: 1px solid #232b3b;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.hidden { display: none; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn-row.tight { margin-top: 8px; }
+button {
+  background: #1d2738;
+  color: #d7dce6;
+  border: 1px solid #33415c;
+  border-radius: 7px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+}
+button:hover:not(:disabled) { border-color: #58a6ff; }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.primary { background: #173a66; border-color: #2f6bb3; }
+button.warn { background: #4a2a1e; border-color: #a35a3c; }
+.rule-note, .hint-text { color: #8b93a7; font-size: 12px; margin: 8px 0 0; }
+.position-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.position-btn { padding: 12px; text-align: left; }
+.position-btn.selected {
+  border-color: #58a6ff;
+  background: #17304f;
+  box-shadow: 0 0 0 1px #58a6ff inset;
+}
+canvas {
+  width: 100%;
+  background: #10141c;
+  border-radius: 8px;
+  border: 1px solid #232b3b;
+}
+.legend { display: flex; gap: 18px; font-size: 12px; color: #8b93a7; margin-top: 6px; }
+.track-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.track-card {
+  background: #0f141d;
+  border: 1px solid #232b3b;
+  border-radius: 8px;
+  padding: 12px;
+}
+.track-card header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.track-meta { color: #8b93a7; font-size: 12px; }
+.deduction-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.deduct-card {
+  background: #0f141d;
+  border: 1px solid #232b3b;
+  border-radius: 8px;
+  padding: 12px;
+}
+.deduct-card label { display: block; font-size: 13px; margin-bottom: 8px; color: #9fb2d3; }
+.deduct-card select {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  background: #10141c;
+  color: #d7dce6;
+  border: 1px solid #2c3444;
+  border-radius: 6px;
+  padding: 7px;
+}
+.summary { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 10px; font-size: 14px; }
+.summary b { color: #58a6ff; }
+.hints p { margin: 6px 0; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+.hint-wrong { background: #3a1f1c; border: 1px solid #7d3a30; color: #f0b8ab; }
+.hint-ok { background: #16301f; border: 1px solid #2f6b43; color: #a7e0bd; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th, td { border: 1px solid #232b3b; padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: #171e2c; color: #9fb2d3; }
+tr.ok td:last-child { color: #7ed49a; }
+tr.bad td:last-child { color: #ef8f7d; }
+tr.bad { background: rgba(125, 58, 48, 0.12); }
+small { color: #8b93a7; }
+@media (max-width: 720px) { .track-grid { grid-template-columns: 1fr; } }

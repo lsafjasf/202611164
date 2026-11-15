@@ -1,0 +1,27 @@
+{
+  "name": "uid773",
+  "version": "1.0.0",
+  "description": "Basement acoustic investigation game built with Web Audio and Canvas",
+  "main": "index.html",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node tests/verify.js && node tests/scheduler.js && node tests/smoke-dom.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsafjasf/202611164.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lsafjasf/202611164/issues"
+  },
+  "homepage": "https://github.com/lsafjasf/202611164#readme",
+  "devDependencies": {
+    "jsdom": "^31.0.1"
+  }
+}
