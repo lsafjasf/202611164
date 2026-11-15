@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1015">
+  <title>雨巷声场 · 四层音序器</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23151a22'/%3E%3Cpath d='M8 20V12m5 12V7m5 13v-7m5 7V9' stroke='%2363d9ff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div>
+          <p class="eyebrow">FOUR-LAYER SOUNDSCAPE / 20 SEC</p>
+          <h1>雨巷声场</h1>
+        </div>
+      </div>
+
+      <div class="transport" aria-label="播放控制">
+        <button class="icon-button primary" id="playBtn" type="button" title="播放 / 暂停（空格）">
+          <svg class="icon play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.8v12.4L18.2 12 8 5.8Z"/></svg>
+          <svg class="icon pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3v13h-3zm6 0h3v13h-3z"/></svg>
+          <span class="sr-only">播放或暂停</span>
+        </button>
+        <button class="icon-button" id="pauseBtn" type="button" title="暂停并释放音频节点">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3v13h-3zm6 0h3v13h-3z"/></svg>
+          <span class="sr-only">暂停</span>
+        </button>
+        <button class="icon-button" id="stopBtn" type="button" title="停止并回到起点（Esc）">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"/></svg>
+          <span class="sr-only">停止</span>
+        </button>
+        <button class="loop-button" id="loopBtn" type="button" aria-pressed="true" title="循环播放">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-2.4-2.4L17 3l4.2 4.2L17 11.4l-1.4-1.4L18 7.6H7a3 3 0 0 0-3 3V13H2v-2.4A5 5 0 0 1 7 7Zm10 10H6v-1.6l-2.4 2.4L6 20.2v-1.7h11a5 5 0 0 0 5-5V11h-2v2.6a3 3 0 0 1-3 3Z"/></svg>
+          循环
+        </button>
+        <div class="time-display" aria-live="off">
+          <span id="timeReadout">00.00</span>
+          <small>/ 20.00 s</small>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <label class="speed-control" for="speedRange">
+          <span>速度</span>
+          <input id="speedRange" type="range" min="0.5" max="1.5" step="0.05" value="1">
+          <output id="speedReadout">1.00×</output>
+        </label>
+        <button class="text-button" id="saveBtn" type="button">保存工程</button>
+        <button class="text-button" id="reloadBtn" type="button">重新载入</button>
+        <button class="text-button accent" id="exportBtn" type="button">导出 WAV</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="library panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">SYNTH LIBRARY</p>
+            <h2>合成层</h2>
+          </div>
+          <span class="count-badge">04</span>
+        </div>
+        <p class="panel-copy">拖到时间线放置；全部声音由 Web Audio 实时合成。</p>
+
+        <div class="layer-list" id="layerList">
+          <article class="layer-card" draggable="true" data-type="rain" tabindex="0">
+            <div class="layer-icon rain-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="layer-info"><strong>雨</strong><span>过滤噪声 · 水珠颗粒</span></div>
+            <span class="drag-grip" aria-hidden="true">::</span>
+          </article>
+          <article class="layer-card" draggable="true" data-type="wind" tabindex="0">
+            <div class="layer-icon wind-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="layer-info"><strong>风</strong><span>棕噪 · 低通涌动</span></div>
+            <span class="drag-grip" aria-hidden="true">::</span>
+          </article>
+          <article class="layer-card" draggable="true" data-type="machine" tabindex="0">
+            <div class="layer-icon machine-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="layer-info"><strong>机器</strong><span>锯齿脉冲 · 金属滤波</span></div>
+            <span class="drag-grip" aria-hidden="true">::</span>
+          </article>
+          <article class="layer-card" draggable="true" data-type="footsteps" tabindex="0">
+            <div class="layer-icon step-icon" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="layer-info"><strong>脚步</strong><span>噪声瞬态 · 低频撞击</span></div>
+            <span class="drag-grip" aria-hidden="true">::</span>
+          </article>
+        </div>
+
+        <div class="signal-card">
+          <div class="signal-head"><span class="signal-dot" id="audioDot"></span><span id="audioStatus">音频引擎待机</span></div>
+          <dl>
+            <div><dt>活动源</dt><dd id="activeSources">0</dd></div>
+            <div><dt>输出延迟</dt><dd id="latencyValue">—</dd></div>
+            <div><dt>主增益</dt><dd id="masterReadout">0.78</dd></div>
+          </dl>
+        </div>
+
+        <div class="shortcut-note">
+          <span>SPACE</span> 播放 / 暂停
+          <span>ESC</span> 停止
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <div class="timeline-toolbar panel">
+          <div class="timeline-title">
+            <p class="eyebrow">ARRANGEMENT</p>
+            <h2>20 秒时间线</h2>
+          </div>
+          <div class="timeline-stats">
+            <div><span>节拍</span><strong id="beatReadout">1.01</strong></div>
+            <div><span>音符</span><strong id="noteReadout">0</strong></div>
+            <div><span>片段</span><strong id="clipReadout">4/4</strong></div>
+          </div>
+          <p class="canvas-hint">双击添加自动化点 · 拖动剪辑移动 · 右缘缩放 · 角点调淡化</p>
+        </div>
+
+        <div class="canvas-panel panel">
+          <canvas id="timeline" aria-label="四轨波形与时间线"></canvas>
+          <div class="canvas-vignette" aria-hidden="true"></div>
+        </div>
+
+        <section class="verification panel" aria-labelledby="verifyTitle">
+          <div class="verify-head">
+            <div>
+              <p class="eyebrow">ROUND-TRIP CHECK</p>
+              <h2 id="verifyTitle">首轮 / 重载一致性</h2>
+            </div>
+            <button class="run-button" id="verifyBtn" type="button">
+              <span class="run-dot"></span>运行完整对照
+            </button>
+          </div>
+          <p class="verify-copy">保存工程后重新解析，再从零播放；比较音符数量、节拍指纹、轨道位置与两次离线导出的采样时长和峰值。</p>
+          <div class="verify-grid" id="verifyGrid">
+            <div class="metric-card"><span>音符数量</span><strong id="metricNotes">—</strong><small>等待运行</small></div>
+            <div class="metric-card"><span>节拍指纹</span><strong id="metricBeats">—</strong><small>绝对 beat 位置</small></div>
+            <div class="metric-card"><span>轨道位置</span><strong id="metricTracks">—</strong><small>起点 / 时长</small></div>
+            <div class="metric-card"><span>导出时长</span><strong id="metricDuration">—</strong><small>首轮 → 重载</small></div>
+          </div>
+          <div class="verify-result" id="verifyResult" data-state="idle">
+            尚未运行。该检查会渲染两次 20 秒 WAV，并验证削波保护。
+          </div>
+        </section>
+      </section>
+
+      <aside class="inspector panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">TRACK PARAMETERS</p>
+            <h2 id="inspectorTitle">雨</h2>
+          </div>
+          <span class="track-chip" id="inspectorChip">RAIN</span>
+        </div>
+
+        <div class="mute-row">
+          <button class="toggle-button" id="muteBtn" type="button">静音</button>
+          <button class="toggle-button" id="soloBtn" type="button">独奏</button>
+          <button class="toggle-button danger" id="resetTrackBtn" type="button">恢复层</button>
+        </div>
+
+        <div class="control-stack">
+          <label class="range-row" for="gainControl">
+            <span>轨道增益 <output id="gainValue">0.58</output></span>
+            <input id="gainControl" type="range" min="0" max="1.5" step="0.01" value="0.58">
+          </label>
+          <label class="range-row" for="panControl">
+            <span>声像 <output id="panValue">L 28</output></span>
+            <input id="panControl" type="range" min="-1" max="1" step="0.01" value="-0.28">
+          </label>
+          <label class="range-row" for="pitchControl">
+            <span>移调 <output id="pitchValue">0 st</output></span>
+            <input id="pitchControl" type="range" min="-12" max="12" step="1" value="0">
+          </label>
+          <label class="range-row" for="startControl">
+            <span>起点 <output id="startValue">0.00 s</output></span>
+            <input id="startControl" type="range" min="0" max="19.75" step="0.05" value="0">
+          </label>
+          <label class="range-row" for="durationControl">
+            <span>时长 <output id="durationValue">20.00 s</output></span>
+            <input id="durationControl" type="range" min="0.25" max="20" step="0.05" value="20">
+          </label>
+        </div>
+
+        <div class="divider"><span>交叉淡化</span></div>
+        <div class="fade-grid">
+          <label for="fadeInControl"><span>淡入</span><output id="fadeInValue">2.20 s</output>
+            <input id="fadeInControl" type="range" min="0" max="8" step="0.05" value="2.2">
+          </label>
+          <label for="fadeOutControl"><span>淡出</span><output id="fadeOutValue">3.60 s</output>
+            <input id="fadeOutControl" type="range" min="0" max="8" step="0.05" value="3.6">
+          </label>
+        </div>
+
+        <label class="select-row" for="patternControl">
+          <span>节奏变体</span>
+          <select id="patternControl">
+            <option value="0">A · 稀疏</option>
+            <option value="1">B · 行走</option>
+            <option value="2">C · 脉冲</option>
+            <option value="3">D · 断裂</option>
+          </select>
+        </label>
+
+        <div class="divider"><span>自动化点</span><b id="automationCount">5</b></div>
+        <div class="automation-list" id="automationList"></div>
+        <button class="wide-button" id="addPointBtn" type="button">在播放头添加自动化点</button>
+
+        <div class="project-meta">
+          <div><span>工程修订</span><strong id="revisionReadout">00</strong></div>
+          <div><span>保存于</span><strong id="savedAt">尚未保存</strong></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="busy-overlay" id="busyOverlay" aria-hidden="true">
+    <div class="busy-card"><span class="spinner"></span><strong id="busyLabel">正在渲染离线音频…</strong><small>所有合成节点均由 Web Audio 生成</small></div>
+  </div>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
