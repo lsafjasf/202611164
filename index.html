@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>种子化程序化地图生成器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>程序化地图生成器</h1>
+    <div class="seed-row">
+      <label>Seed <input id="seedInput" type="text" value="20261116"></label>
+      <button id="applySeedBtn" class="primary">应用 Seed</button>
+      <button id="newSeedBtn">随机 Seed</button>
+      <button id="regenerateBtn">显式重新生成</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="map-panel">
+      <div class="summary">
+        <span>Seed: <b id="summarySeed"></b></span>
+        <span>目标数量: <b id="summaryTargets"></b></span>
+        <span>布局哈希: <code id="summaryHash"></code></span>
+      </div>
+      <p class="rules" id="summaryRules"></p>
+      <div class="canvas-wrap">
+        <canvas id="mapCanvas"></canvas>
+      </div>
+      <div id="blockedBox" class="blocked" style="display:none"></div>
+      <p class="hint">拖动画布上的村落 / 塔楼 / 补给点即可重算覆盖圈与路线；红色叉号标示阻断位置。</p>
+    </section>
+
+    <aside class="side-panel">
+      <h2>参数规则</h2>
+      <div class="grid-form">
+        <label>网格宽 <input id="pWidth" type="number" min="20" max="160"></label>
+        <label>网格高 <input id="pHeight" type="number" min="20" max="160"></label>
+        <label>水位阈值 <input id="pWater" type="number" step="0.05" min="0" max="1"></label>
+        <label>最小间距 <input id="pSpacing" type="number" min="1"></label>
+        <label>村落数 <input id="pVillages" type="number" min="0" max="20"></label>
+        <label>塔楼数 <input id="pTowers" type="number" min="0" max="20"></label>
+        <label>补给数 <input id="pSupplies" type="number" min="0" max="20"></label>
+        <label>村落半径 <input id="pCovVillage" type="number" min="1"></label>
+        <label>塔楼半径 <input id="pCovTower" type="number" min="1"></label>
+        <label>补给半径 <input id="pCovSupply" type="number" min="1"></label>
+      </div>
+      <div class="button-row">
+        <button id="applyParamsBtn" class="primary">应用参数</button>
+        <button id="resetParamsBtn">恢复默认</button>
+      </div>
+
+      <h2>存档</h2>
+      <div class="button-row wrap">
+        <button id="saveBtn">保存</button>
+        <button id="loadBtn">载入</button>
+        <button id="exportBtn">导出 JSON</button>
+        <label class="file-btn">导入 JSON
+          <input id="importFile" type="file" accept="application/json" hidden>
+        </label>
+      </div>
+
+      <h2>编辑记录</h2>
+      <ul id="editLog" class="edit-log"></ul>
+      <p id="statusLine" class="status"></p>
+    </aside>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

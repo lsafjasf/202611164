@@ -1,0 +1,10 @@
+{
+  "name": "seeded-map-generator",
+  "version": "1.0.0",
+  "description": "Deterministic seeded procedural map generator with incremental recomputation",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/verify.mjs",
+    "serve": "python3 -m http.server 8000"
+  }
+}
