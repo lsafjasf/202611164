@@ -1,0 +1,11 @@
+{
+  "name": "slice04-drum-sequencer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "check": "node --check src/model.js && node --check src/drums.js && node --check src/audio-engine.js && node --check src/waveform.js && node --check src/app.js"
+  }
+}
