@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>界面配色对比度检查器</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" id="skip-link" href="#main">跳到主要内容</a>
+  <header class="app-header">
+    <h1>界面配色对比度检查器</h1>
+    <p class="subtitle">WCAG 2.1 对比度检查 · 正文 / 按钮 / 焦点状态实时评估，纯本地计算，无外部检查库</p>
+  </header>
+
+  <main id="main">
+    <section class="panel" aria-labelledby="scenario-h">
+      <h2 id="scenario-h">1. 测试色板（可重复场景）</h2>
+      <div id="scenario-buttons" class="scenario-row" role="group" aria-label="选择测试场景"></div>
+      <p id="scenario-desc" class="scenario-desc" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="swatch-h">
+      <h2 id="swatch-h">2. 调整色板</h2>
+      <div id="swatch-controls" class="swatch-grid"></div>
+      <div class="action-row">
+        <button type="button" id="btn-repair" class="btn btn-warn">一键修复不达标颜色</button>
+        <button type="button" id="btn-baseline" class="btn">将当前色板设为对比基线</button>
+        <button type="button" id="btn-reset" class="btn btn-ghost">恢复默认色板</button>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="result-h">
+      <h2 id="result-h">3. 对比度检查结果</h2>
+      <table class="result-table" aria-describedby="result-summary">
+        <caption>正文、按钮与焦点状态的 WCAG 2.1 对比度达标情况</caption>
+        <thead>
+          <tr><th scope="col">检查项</th><th scope="col">前景</th><th scope="col">背景</th><th scope="col">实测比值</th><th scope="col">最低要求</th><th scope="col">结论</th></tr>
+        </thead>
+        <tbody id="result-tbody"></tbody>
+      </table>
+      <p id="result-summary" class="result-summary" aria-live="polite"></p>
+    </section>
+
+    <section class="panel" aria-labelledby="preview-h">
+      <h2 id="preview-h">4. 模拟组件预览（Canvas）</h2>
+      <div class="canvas-wrap">
+        <canvas id="preview-canvas" width="720" height="360" role="img" aria-label="模拟组件预览"></canvas>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="export-h">
+      <h2 id="export-h">5. 导出</h2>
+      <div class="action-row">
+        <button type="button" id="btn-export-css" class="btn btn-primary">导出 CSS 变量</button>
+        <button type="button" id="btn-export-png" class="btn btn-primary">导出前后对比 PNG</button>
+        <button type="button" id="btn-export-summary" class="btn">导出无障碍检查摘要</button>
+      </div>
+      <h3>导出记录（刷新/重载后保留）</h3>
+      <ul id="export-records" class="export-list"></ul>
+    </section>
+
+    <section class="panel" aria-labelledby="test-h">
+      <h2 id="test-h">6. 内置测试与统计</h2>
+      <div class="action-row">
+        <button type="button" id="btn-run-tests" class="btn btn-primary">运行全部测试</button>
+      </div>
+      <div id="test-stats" class="test-stats" aria-live="polite" aria-atomic="true">尚未运行测试。</div>
+      <table class="test-table" aria-label="测试用例明细">
+        <thead><tr><th scope="col">编号</th><th scope="col">用例</th><th scope="col">结果</th><th scope="col">说明 / 失败原因</th></tr></thead>
+        <tbody id="test-tbody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <div id="live-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  <div id="live-alert" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+  <script src="js/contrast.js"></script>
+  <script src="js/palettes.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/canvas-view.js"></script>
+  <script src="js/export-lib.js"></script>
+  <script src="js/tests.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
