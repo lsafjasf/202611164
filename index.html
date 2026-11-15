@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>字幕场景 · 测量缓存演示</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; }
+    h1 { font-size: 1.2rem; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .toolbar label { display: flex; align-items: center; gap: 4px; }
+    button, select, input { font: inherit; }
+    button:focus-visible, [tabindex]:focus-visible { outline: 3px solid #4d9fff; outline-offset: 2px; }
+    #scene {
+      border: 1px solid #888; border-radius: 8px; height: 320px;
+      overflow-y: auto; position: relative; padding: 8px;
+    }
+    .sub {
+      position: absolute; left: 8px; right: 8px; padding: 4px 8px;
+      border-radius: 6px; background: rgba(127,127,127,.12); cursor: pointer;
+      white-space: pre-wrap; word-break: normal; overflow-wrap: normal;
+    }
+    .sub[aria-selected="true"] { background: rgba(77,159,255,.25); }
+    #stats { margin-top: 12px; font-family: ui-monospace, monospace; font-size: .85rem; white-space: pre; }
+    #error { color: #d33; min-height: 1.2em; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>字幕场景（文本测量缓存）</h1>
+  <div class="toolbar" role="group" aria-label="样式与操作">
+    <label>字号
+      <input id="fontSize" type="number" min="8" max="96" value="24" style="width:4.5em" />
+    </label>
+    <label>宽度
+      <input id="width" type="number" min="40" max="1200" value="480" style="width:5em" />
+    </label>
+    <label>对齐
+      <select id="align">
+        <option value="left">左对齐</option>
+        <option value="center">居中</option>
+        <option value="right">右对齐</option>
+      </select>
+    </label>
+    <button id="exportBtn">导出工程 (Enter)</button>
+  </div>
+  <div id="scene" role="listbox" aria-label="字幕列表" tabindex="0"></div>
+  <p id="error" role="alert"></p>
+  <div id="live" class="sr-only" aria-live="polite"></div>
+  <div id="stats" aria-label="缓存统计"></div>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
