@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>双语海报编辑器 / Bilingual Poster Editor</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <header class="toolbar" role="banner">
+      <h1 id="app-title" class="title" data-i18n="appTitle">双语海报编辑器</h1>
+      <div class="toolbar-group" role="group" aria-label="language">
+        <label id="lang-label" for="lang-select" data-i18n="langLabel">语言</label>
+        <select id="lang-select" aria-labelledby="lang-label">
+          <option value="zh">中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="toolbar-group" role="group" aria-label="tools">
+        <button type="button" id="btn-rect" data-i18n="addRect">添加矩形</button>
+        <button type="button" id="btn-circle" data-i18n="addCircle">添加圆形</button>
+        <button type="button" id="btn-text" data-i18n="addText">添加文字</button>
+        <button type="button" id="btn-delete" class="danger" data-i18n="delete">删除所选</button>
+      </div>
+      <div class="toolbar-group" role="group" aria-label="history">
+        <button type="button" id="btn-undo" data-i18n="undo">撤销</button>
+        <button type="button" id="btn-redo" data-i18n="redo">重做</button>
+      </div>
+      <div class="toolbar-group" role="group" aria-label="export">
+        <button type="button" id="btn-png" data-i18n="exportPng">导出 PNG</button>
+        <button type="button" id="btn-svg" data-i18n="exportSvg">导出 SVG</button>
+        <button type="button" id="btn-restore" class="ghost" data-i18n="statusRestored">恢复快照</button>
+      </div>
+      <div class="toolbar-group" role="group" aria-label="checks">
+        <button type="button" id="btn-tests" class="accent" data-i18n="runTests">运行自检</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="inspector" aria-label="inspector">
+        <div class="field">
+          <label for="text-input" data-i18n="textContent">文字内容</label>
+          <textarea id="text-input" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label for="font-size" data-i18n="fontSize">字号</label>
+          <input id="font-size" type="range" min="12" max="96" step="1" value="28" />
+          <span id="font-size-value" class="value">28</span>
+        </div>
+        <div class="field">
+          <label for="fill-color" data-i18n="fill">填充色</label>
+          <input id="fill-color" type="color" value="#2563eb" />
+        </div>
+        <p id="a11y-note" class="note" data-i18n="a11yNote"></p>
+      </section>
+
+      <section class="canvas-wrap">
+        <canvas
+          id="poster-canvas"
+          width="900"
+          height="600"
+          tabindex="0"
+          role="application"
+          aria-label="poster canvas"
+        ></canvas>
+        <div id="layer-info" class="sr-only" aria-live="polite"></div>
+      </section>
+
+      <section class="results" aria-label="test results">
+        <h2 id="results-title" data-i18n="runTests">运行自检</h2>
+        <ul id="test-results" class="test-list"></ul>
+        <p id="test-summary" class="summary" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <div id="live-region" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
