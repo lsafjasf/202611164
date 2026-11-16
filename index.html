@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07100d" />
+    <meta
+      name="description"
+      content="在夜林中移动监听器，用双耳声场与回声辨认三处地面材质及其发声顺序。"
+    />
+    <title>回声林区 · ECHO GROVE</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1712'/%3E%3Cpath d='M7 16h2m4-6v12m5-17v22m5-14v6m4-9v12' stroke='%23bedb7d' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <link
+      rel="preload"
+      href="./assets/fonts/echo-sans-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="回声林区首页">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 42 42" role="img">
+              <path d="M8 21h3m4-7v14m5-20v26m5-16v6m5-10v14m5-7h3" />
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <strong>回声林区</strong>
+            <small>ECHO GROVE / FIELD UNIT 07</small>
+          </span>
+        </a>
+
+        <form class="seed-form" id="seedForm">
+          <label for="seedInput">案件 SEED</label>
+          <div class="seed-control">
+            <input
+              id="seedInput"
+              name="seed"
+              type="text"
+              value="NIGHT-001"
+              maxlength="28"
+              autocomplete="off"
+              spellcheck="false"
+              aria-describedby="seedHelp"
+            />
+            <button class="icon-button" type="submit" title="载入该 Seed" aria-label="载入该 Seed">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 12h13m-5-5 5 5-5 5" />
+              </svg>
+            </button>
+          </div>
+          <span class="sr-only" id="seedHelp">相同 Seed 会生成相同的线索与评分规则</span>
+        </form>
+
+        <div class="system-status">
+          <span class="status-dot" id="audioDot" aria-hidden="true"></span>
+          <div>
+            <span id="audioStatus">音频待机</span>
+            <small id="caseCode">CASE NIGHT-001</small>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="case-brief" aria-labelledby="caseTitle">
+          <div class="brief-copy">
+            <p class="eyebrow">
+              <span class="live-pip" aria-hidden="true"></span>
+              夜间声学调查 · 03 个未知声源
+            </p>
+            <h1 id="caseTitle">三种脚步，藏在同一片夜林里。</h1>
+            <p>
+              拖动监听器改变耳位。回声揭示距离，左右声道指向方位；风会遮住细节，走得太快则只剩自己的脚步。
+            </p>
+          </div>
+          <div class="brief-actions">
+            <button class="primary-button start-button" id="startBtn" type="button">
+              <span class="button-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="m9 6 9 6-9 6V6Z" /></svg>
+              </span>
+              <span>
+                <strong>开始监听</strong>
+                <small>BEGIN 22s TAPE</small>
+              </span>
+            </button>
+            <button class="text-button" id="pauseBtn" type="button" disabled>
+              暂停
+            </button>
+            <button class="text-button" id="replayBtn" type="button" disabled>
+              重放线索
+            </button>
+          </div>
+        </section>
+
+        <div class="workspace">
+          <section class="panel field-panel" aria-labelledby="fieldTitle">
+            <header class="panel-heading">
+              <div>
+                <p class="panel-kicker">01 / LISTENING POSITION</p>
+                <h2 id="fieldTitle">监听范围</h2>
+              </div>
+              <div class="move-readout">
+                <span class="move-label">移动速度</span>
+                <strong id="speedReadout">0.0</strong>
+                <small>m/s</small>
+              </div>
+            </header>
+
+            <div class="field-frame">
+              <div
+                class="forest-field"
+                id="forestField"
+                role="application"
+                tabindex="0"
+                aria-label="可拖拽的监听器位置。使用方向键或拖动白色监听器来移动。"
+              >
+                <div class="forest-glow" aria-hidden="true"></div>
+                <div class="field-grid" aria-hidden="true"></div>
+                <div class="range-ring ring-one" aria-hidden="true"></div>
+                <div class="range-ring ring-two" aria-hidden="true"></div>
+                <div class="range-ring ring-three" aria-hidden="true"></div>
+                <div class="compass compass-n" aria-hidden="true"><span>N</span></div>
+                <div class="compass compass-e" aria-hidden="true"><span>E</span></div>
+                <div class="compass compass-s" aria-hidden="true"><span>S</span></div>
+                <div class="compass compass-w" aria-hidden="true"><span>W</span></div>
+                <div class="edge-fog fog-left" aria-hidden="true"></div>
+                <div class="edge-fog fog-right" aria-hidden="true"></div>
+
+                <div class="trail trail-a" aria-hidden="true"></div>
+                <div class="trail trail-b" aria-hidden="true"></div>
+
+                <div class="listener" id="listener" aria-hidden="true">
+                  <span class="listener-wave wave-left"></span>
+                  <span class="listener-wave wave-right"></span>
+                  <span class="listener-core">
+                    <svg viewBox="0 0 32 32">
+                      <path d="M7 19v-4a9 9 0 0 1 18 0v4" />
+                      <path d="M7 18h3v7H8a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2Zm15 0h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3v-7Z" />
+                    </svg>
+                  </span>
+                  <span class="listener-label">LISTENER</span>
+                </div>
+              </div>
+
+              <aside class="field-side">
+                <div class="headphone-card">
+                  <span class="mini-label">BINAURAL</span>
+                  <div class="headphone-visual" aria-hidden="true">
+                    <span>L</span>
+                    <svg viewBox="0 0 72 48">
+                      <path d="M10 31v-7a26 26 0 0 1 52 0v7" />
+                      <rect x="5" y="28" width="12" height="17" rx="5" />
+                      <rect x="55" y="28" width="12" height="17" rx="5" />
+                    </svg>
+                    <span>R</span>
+                  </div>
+                  <p>建议佩戴耳机。移动后重放同一段磁带，比较双耳偏置。</p>
+                </div>
+                <div class="noise-card" id="noiseCard">
+                  <span class="mini-label">SELF NOISE</span>
+                  <div class="noise-state">
+                    <span class="noise-ring" aria-hidden="true"></span>
+                    <strong id="noiseLabel">安静</strong>
+                  </div>
+                  <p id="noiseHint">缓速拖动可压低自身脚步噪声。</p>
+                </div>
+                <div class="coordinate-card">
+                  <span class="mini-label">GRID POSITION</span>
+                  <strong id="positionReadout">X 50.0 / Y 50.0</strong>
+                  <span>监听器坐标不包含声源信息</span>
+                </div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="panel recorder-panel" aria-labelledby="recorderTitle">
+            <header class="panel-heading recorder-heading">
+              <div>
+                <p class="panel-kicker">02 / FIELD RECORDER</p>
+                <h2 id="recorderTitle">声压与现场记录</h2>
+              </div>
+              <div class="tape-time">
+                <span id="recDot" class="rec-dot" aria-hidden="true"></span>
+                <span id="tapeState">STANDBY</span>
+                <strong id="tapeTime">00:00.0</strong>
+              </div>
+            </header>
+            <div class="canvas-shell">
+              <canvas id="scopeCanvas" aria-label="实时声压示波器与声音记录">
+                当前浏览器不支持 Canvas。
+              </canvas>
+              <p class="canvas-caption">
+                <span>示波器仅显示声压与探测记录</span>
+                <span>WIND / FOOTSTEP / SOURCE PULSE</span>
+              </p>
+            </div>
+            <div class="tape-progress">
+              <div class="progress-track" aria-hidden="true">
+                <span id="progressFill"></span>
+                <i style="left: 22.7%"></i>
+                <i style="left: 49.5%"></i>
+                <i style="left: 75%"></i>
+              </div>
+              <div class="progress-labels">
+                <span>00:00</span>
+                <span>线索磁带 · 22 SEC</span>
+                <span>00:22</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel inference-panel" id="inferencePanel" aria-labelledby="inferenceTitle">
+          <header class="panel-heading inference-heading">
+            <div>
+              <p class="panel-kicker">03 / INFERENCE SHEET</p>
+              <h2 id="inferenceTitle">按发声时间记录推断</h2>
+            </div>
+            <div class="penalty-note">
+              <span>错误惩罚</span>
+              <strong id="penaltyText">材质 −24 / 顺序 −15</strong>
+            </div>
+          </header>
+
+          <div class="inference-body">
+            <div class="slot-grid" id="slotGrid">
+              <article class="slot-card" data-slot="1">
+                <div class="slot-topline">
+                  <span class="slot-number">01</span>
+                  <span class="slot-window">约 00:05</span>
+                </div>
+                <label for="guess1">第一声 · 地面材质</label>
+                <div class="select-wrap">
+                  <select id="guess1" aria-label="第一声的地面材质">
+                    <option value="">尚未判断</option>
+                  </select>
+                  <span class="select-arrow" aria-hidden="true"></span>
+                </div>
+                <p class="slot-status" id="slotStatus1">等待监听</p>
+              </article>
+              <article class="slot-card" data-slot="2">
+                <div class="slot-topline">
+                  <span class="slot-number">02</span>
+                  <span class="slot-window">约 00:11</span>
+                </div>
+                <label for="guess2">第二声 · 地面材质</label>
+                <div class="select-wrap">
+                  <select id="guess2" aria-label="第二声的地面材质">
+                    <option value="">尚未判断</option>
+                  </select>
+                  <span class="select-arrow" aria-hidden="true"></span>
+                </div>
+                <p class="slot-status" id="slotStatus2">等待监听</p>
+              </article>
+              <article class="slot-card" data-slot="3">
+                <div class="slot-topline">
+                  <span class="slot-number">03</span>
+                  <span class="slot-window">约 00:17</span>
+                </div>
+                <label for="guess3">第三声 · 地面材质</label>
+                <div class="select-wrap">
+                  <select id="guess3" aria-label="第三声的地面材质">
+                    <option value="">尚未判断</option>
+                  </select>
+                  <span class="select-arrow" aria-hidden="true"></span>
+                </div>
+                <p class="slot-status" id="slotStatus3">等待监听</p>
+              </article>
+            </div>
+
+            <div class="submit-column">
+              <p>
+                提交后将并排展示你的材质判断与对应声源的真实时间、频段及回波参数。
+              </p>
+              <button class="submit-button" id="submitBtn" type="button" disabled>
+                <span>提交推断</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h13m-5-5 5 5-5 5" />
+                </svg>
+              </button>
+              <span class="form-message" id="formMessage" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <span>ECHO GROVE · FIELD UNIT 07</span>
+        <span>所有声源、回波与风扰均由程序实时生成</span>
+      </footer>
+    </div>
+
+    <div class="result-overlay" id="resultOverlay" hidden>
+      <section
+        class="result-card"
+        id="resultCard"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resultTitle"
+      >
+        <button class="result-close" id="resultClose" type="button" aria-label="关闭结算">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
+        </button>
+        <header class="result-head">
+          <div>
+            <p class="panel-kicker">CASE DEBRIEF</p>
+            <h2 id="resultTitle">声景重建完成</h2>
+            <p id="resultMessage"></p>
+          </div>
+          <div class="score-dial" id="scoreDial">
+            <span id="scoreValue">100</span>
+            <small>SCORE</small>
+          </div>
+        </header>
+
+        <div class="dimension-row" id="dimensionRow"></div>
+
+        <div class="comparison-wrap">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>判断 / 时间槽</th>
+                <th>对应声源</th>
+                <th>真实材质</th>
+                <th>发声时刻</th>
+                <th>主频段</th>
+                <th>回波参数</th>
+              </tr>
+            </thead>
+            <tbody id="comparisonBody"></tbody>
+          </table>
+        </div>
+
+        <div class="result-foot">
+          <div class="seed-receipt">
+            <span>SEED</span>
+            <strong id="resultSeed">NIGHT-001</strong>
+            <small id="resultRule"></small>
+          </div>
+          <div class="result-actions">
+            <button class="secondary-button" id="newSeedBtn" type="button">换一个 Seed</button>
+            <button class="primary-button" id="restartSeedBtn" type="button">
+              同 Seed 重开
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
