@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>四轨合成器 · Web Audio 步进音序器</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>四轨合成器</h1>
+    <div id="transport">
+      <button id="btn-play">▶ 播放</button>
+      <button id="btn-pause">⏸ 暂停</button>
+      <button id="btn-stop">⏹ 停止</button>
+      <button id="btn-loop" class="active">🔁 循环</button>
+      <label>速度 <input id="tempo" type="range" min="60" max="180" step="1" value="120" />
+        <span id="tempo-val">120</span> BPM</label>
+      <button id="btn-save">💾 保存</button>
+      <button id="btn-load">📂 载入</button>
+      <button id="btn-export">⬇ 导出 WAV</button>
+      <span id="clip-led" title="削波指示">CLIP</span>
+    </div>
+  </header>
+
+  <canvas id="waveform" width="960" height="120"></canvas>
+
+  <main id="tracks"></main>
+
+  <section id="master-section">
+    <h2>总线</h2>
+    <canvas id="master-fader" class="fader-canvas" width="60" height="180" data-param="master.gain"></canvas>
+    <label>压缩阈值 <input id="comp-threshold" type="range" min="-40" max="0" step="1" value="-18" /> dB</label>
+    <label>压缩比 <input id="comp-ratio" type="range" min="1" max="12" step="0.5" value="4" /></label>
+    <label><input id="comp-enabled" type="checkbox" checked /> 启用总线压缩</label>
+  </section>
+
+  <footer>
+    <span id="status">就绪</span>
+    <span id="position">小节 1 · 步 1</span>
+  </footer>
+
+  <input id="file-input" type="file" accept="application/json" hidden />
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
