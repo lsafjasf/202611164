@@ -1,0 +1,16 @@
+{
+  "name": "focus-canvas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "键盘优先、支持鼠标与触屏的二维绘图工具",
+  "scripts": {
+    "start": "node server.mjs",
+    "serve": "node server.mjs",
+    "test": "node test/e2e.mjs",
+    "test:e2e": "node test/e2e.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
+}

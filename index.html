@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f1e8">
+  <meta name="description" content="完全支持键盘、鼠标和触屏操作的二维绘图工具，自动保存工程并导出 SVG/PNG。">
+  <title>焦点画布 · 键盘优先二维绘图</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#drawing-canvas">跳到绘图画布</a>
+
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="焦点画布首页">
+      <span class="brand-mark" aria-hidden="true">F</span>
+      <span>
+        <strong>焦点画布</strong>
+        <small>Focus Canvas</small>
+      </span>
+    </a>
+    <div class="header-meta">
+      <span id="save-state" class="save-state" role="status">正在载入工程…</span>
+      <button id="help-button" class="button button-quiet" type="button" aria-haspopup="dialog" aria-keyshortcuts="?">
+        <span aria-hidden="true">?</span> 快捷键与帮助
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace" aria-label="绘图工作区">
+    <aside class="panel tools-panel" aria-labelledby="tools-heading">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">TOOLS</p>
+          <h1 id="tools-heading">绘图工具</h1>
+        </div>
+        <span class="key-hint" aria-hidden="true">1–7</span>
+      </div>
+
+      <div id="tool-list" class="tool-list" role="group" aria-label="选择绘图工具">
+        <button class="tool-button" type="button" data-tool="select" aria-pressed="false" aria-keyshortcuts="V">
+          <span class="tool-key" aria-hidden="true">V</span>
+          <span class="tool-name">选择</span>
+          <span class="tool-icon" aria-hidden="true">↖</span>
+        </button>
+        <button class="tool-button" type="button" data-tool="pen" aria-pressed="true" aria-keyshortcuts="P">
+          <span class="tool-key" aria-hidden="true">P</span>
+          <span class="tool-name">画笔</span>
+          <span class="tool-icon" aria-hidden="true">✎</span>
+        </button>
+        <button class="tool-button" type="button" data-tool="line" aria-pressed="false" aria-keyshortcuts="L">
+          <span class="tool-key" aria-hidden="true">L</span>
+          <span class="tool-name">直线</span>
+          <span class="tool-icon" aria-hidden="true">╱</span>
+        </button>
+        <button class="tool-button" type="button" data-tool="rect" aria-pressed="false" aria-keyshortcuts="R">
+          <span class="tool-key" aria-hidden="true">R</span>
+          <span class="tool-name">矩形</span>
+          <span class="tool-icon" aria-hidden="true">□</span>
+        </button>
+        <button class="tool-button" type="button" data-tool="ellipse" aria-pressed="false" aria-keyshortcuts="O">
+          <span class="tool-key" aria-hidden="true">O</span>
+          <span class="tool-name">椭圆</span>
+          <span class="tool-icon" aria-hidden="true">○</span>
+        </button>
+        <button class="tool-button" type="button" data-tool="text" aria-pressed="false" aria-keyshortcuts="T">
+          <span class="tool-key" aria-hidden="true">T</span>
+          <span class="tool-name">文字</span>
+          <span class="tool-icon" aria-hidden="true">T</span>
+        </button>
+        <button class="tool-button" type="button" data-tool="eraser" aria-pressed="false" aria-keyshortcuts="E">
+          <span class="tool-key" aria-hidden="true">E</span>
+          <span class="tool-name">橡皮</span>
+          <span class="tool-icon" aria-hidden="true">⌫</span>
+        </button>
+      </div>
+
+      <section class="style-card" aria-labelledby="style-heading">
+        <div class="section-title-row">
+          <h2 id="style-heading">画笔样式</h2>
+          <span class="section-note">自动保存</span>
+        </div>
+        <label class="field" for="stroke-color">
+          <span>颜色</span>
+          <span class="color-row">
+            <input id="stroke-color" type="color" value="#20242c" aria-describedby="color-value">
+            <output id="color-value" for="stroke-color">#20242C</output>
+          </span>
+        </label>
+        <label class="field" for="stroke-width">
+          <span>线宽 <output id="width-value" for="stroke-width">4 px</output></span>
+          <input id="stroke-width" type="range" min="1" max="24" step="1" value="4">
+        </label>
+      </section>
+
+      <div class="history-actions" aria-label="历史操作">
+        <button id="undo-button" class="button" type="button" disabled aria-keyshortcuts="Control+Z Meta+Z">
+          <span aria-hidden="true">↶</span> 撤销
+        </button>
+        <button id="redo-button" class="button" type="button" disabled aria-keyshortcuts="Control+Shift+Z Meta+Shift+Z">
+          <span aria-hidden="true">↷</span> 重做
+        </button>
+      </div>
+    </aside>
+
+    <section class="canvas-column" aria-labelledby="canvas-heading">
+      <div class="canvas-toolbar">
+        <div>
+          <p class="eyebrow">CANVAS / 1200 × 800</p>
+          <h2 id="canvas-heading">绘图画布</h2>
+        </div>
+        <div class="zoom-controls" role="group" aria-label="画布缩放">
+          <button id="zoom-out" class="icon-button" type="button" aria-label="缩小画布" aria-keyshortcuts="-">
+            <span aria-hidden="true">−</span>
+          </button>
+          <output id="zoom-value" for="zoom-out zoom-in reset-zoom" aria-live="off">100%</output>
+          <button id="zoom-in" class="icon-button" type="button" aria-label="放大画布" aria-keyshortcuts="+">
+            <span aria-hidden="true">+</span>
+          </button>
+          <button id="reset-zoom" class="button button-small" type="button" aria-keyshortcuts="0">适应</button>
+        </div>
+      </div>
+
+      <div id="canvas-shell" class="canvas-shell">
+        <canvas
+          id="drawing-canvas"
+          tabindex="0"
+          role="application"
+          aria-label="绘图画布，当前工具：画笔。使用方向键移动光标，空格键开始或完成绘制。"
+          aria-describedby="canvas-help canvas-status"
+          aria-keyshortcuts="ArrowUp ArrowDown ArrowLeft ArrowRight Space Enter Escape Delete"
+        ></canvas>
+        <div class="canvas-hud" aria-hidden="true">
+          <span id="hud-tool" class="hud-chip"><b>P</b> 画笔</span>
+          <span id="hud-focus" class="hud-chip">焦点 600, 400</span>
+        </div>
+        <p id="canvas-help" class="canvas-help">
+          <span aria-hidden="true">⌨</span>
+          方向键移动 · 空格开始/完成 · Esc 取消 · +/− 缩放 · Ctrl+Z 撤销
+        </p>
+        <div id="empty-hint" class="empty-hint" aria-hidden="true">
+          <strong>从第一笔开始</strong>
+          <span>按空格键，在焦点处落笔</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel inspector-panel" aria-labelledby="inspector-heading">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">INSPECT</p>
+          <h2 id="inspector-heading">工程状态</h2>
+        </div>
+        <span id="object-count" class="count-badge">0 个对象</span>
+      </div>
+
+      <section class="status-card" aria-labelledby="focus-heading">
+        <div class="section-title-row">
+          <h3 id="focus-heading">当前焦点</h3>
+          <span id="focus-source" class="section-note">画布</span>
+        </div>
+        <p id="focus-summary" class="focus-summary">工具：画笔<br>坐标：600, 400 · 缩放 100%</p>
+        <div class="state-grid">
+          <span>工程</span><strong id="project-name">未命名工程</strong>
+          <span>保存</span><strong id="persistence-note">等待首次更改</strong>
+          <span>最近导出</span><strong id="last-export">尚未导出</strong>
+        </div>
+      </section>
+
+      <section class="export-card" aria-labelledby="export-heading">
+        <div class="section-title-row">
+          <h2 id="export-heading">导出工程</h2>
+          <span class="section-note">不改动画面</span>
+        </div>
+        <p class="card-copy">导出前会保留工程、工具与焦点；格式和时间写入本地工程记录。</p>
+        <div class="export-actions">
+          <button id="export-svg" class="button button-primary" type="button">
+            <span aria-hidden="true">↓</span> 导出 SVG
+          </button>
+          <button id="export-png" class="button" type="button">
+            <span aria-hidden="true">↓</span> 导出 PNG
+          </button>
+        </div>
+        <div id="export-result" class="inline-status" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="objects-card" aria-labelledby="objects-heading">
+        <div class="section-title-row">
+          <h2 id="objects-heading">对象列表</h2>
+          <span class="object-actions">
+            <button id="clear-canvas" class="text-button" type="button">清空画布</button>
+            <button id="delete-object" class="text-button" type="button" disabled>删除所选</button>
+          </span>
+        </div>
+        <p id="selection-note" class="card-copy">选择工具后，用空格拾取对象。</p>
+        <ol id="object-list" class="object-list" aria-label="画布对象"></ol>
+      </section>
+
+      <footer class="audit-links">
+        <a href="artifacts/a11y-summary.html">无障碍检查摘要</a>
+        <a href="artifacts/test-report.html">测试报告</a>
+      </footer>
+    </aside>
+  </main>
+
+  <div id="canvas-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true">
+    当前工具画笔，光标 600, 400，缩放 100%。
+  </div>
+  <div id="error-banner" class="error-banner" role="alert" hidden>
+    <div>
+      <strong>操作未完成</strong>
+      <p id="error-message"></p>
+    </div>
+    <button id="error-action" class="button button-small" type="button">重试</button>
+    <button id="error-dismiss" class="icon-button" type="button" aria-label="关闭错误提示">×</button>
+  </div>
+
+  <dialog id="help-dialog" class="dialog" aria-labelledby="help-title">
+    <div class="dialog-heading">
+      <div>
+        <p class="eyebrow">KEYBOARD FIRST</p>
+        <h2 id="help-title">完整键盘路径</h2>
+      </div>
+      <button class="icon-button dialog-close" type="button" aria-label="关闭帮助">×</button>
+    </div>
+    <div class="shortcut-grid">
+      <kbd>1–7</kbd><span>按工具栏顺序选择工具</span>
+      <kbd>P / L / R / O / T / E</kbd><span>画笔、直线、矩形、椭圆、文字、橡皮</span>
+      <kbd>方向键</kbd><span>移动画布焦点（Shift 1 px，Alt 50 px）</span>
+      <kbd>空格 / Enter</kbd><span>开始并完成当前图形或拾取对象</span>
+      <kbd>Esc</kbd><span>取消正在绘制的图形</span>
+      <kbd>+ / − / 0</kbd><span>放大、缩小、恢复适应视图</span>
+      <kbd>Ctrl/⌘ + Z</kbd><span>撤销；加 Shift 为重做</span>
+      <kbd>Tab</kbd><span>在工具、画布与导出按钮间移动焦点</span>
+    </div>
+    <p class="dialog-note">鼠标、触屏与键盘共同写入同一工程模型。所有更改自动保存到本机。</p>
+    <form method="dialog"><button class="button button-primary">知道了</button></form>
+  </dialog>
+
+  <dialog id="text-dialog" class="dialog" aria-labelledby="text-title">
+    <form id="text-form" novalidate>
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">TEXT OBJECT</p>
+          <h2 id="text-title">添加文字</h2>
+        </div>
+        <button class="icon-button dialog-close" type="button" aria-label="关闭文字对话框">×</button>
+      </div>
+      <p id="text-position" class="dialog-note">插入位置：600, 400</p>
+      <label class="field field-stack" for="text-input">
+        <span>文字内容</span>
+        <textarea id="text-input" rows="3" maxlength="240" required aria-describedby="text-error"></textarea>
+      </label>
+      <p id="text-error" class="field-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button id="text-cancel" class="button" type="button">取消</button>
+        <button class="button button-primary" type="submit">插入文字</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="clear-dialog" class="dialog" aria-labelledby="clear-title">
+    <form method="dialog">
+      <div class="dialog-heading">
+        <div>
+          <p class="eyebrow">DESTRUCTIVE ACTION</p>
+          <h2 id="clear-title">清空画布？</h2>
+        </div>
+      </div>
+      <p class="dialog-note">这会移除全部对象，但会保留当前工具、缩放和最近导出记录。可通过撤销恢复。</p>
+      <div class="dialog-actions">
+        <button class="button" value="cancel">取消</button>
+        <button id="confirm-clear" class="button button-danger" value="clear">清空画布</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
