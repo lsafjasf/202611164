@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>洞穴生成器 — 确定性 seed 复现</title>
+<style>
+  body { margin: 0; font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+         background: #1b1e24; color: #d8dce3; }
+  #wrap { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
+  #panel { width: 320px; flex: none; font-size: 13px; }
+  #panel h1 { font-size: 17px; margin: 0 0 10px; }
+  .row { margin-bottom: 10px; }
+  .row label { display: block; margin-bottom: 3px; color: #9aa3b2; }
+  input[type=text], textarea { width: 100%; box-sizing: border-box;
+    background: #262a32; color: #d8dce3; border: 1px solid #3a404c;
+    border-radius: 4px; padding: 5px 7px; font-family: inherit; }
+  input[type=range] { width: 100%; }
+  button { background: #3d6fb4; color: #fff; border: 0; border-radius: 4px;
+           padding: 6px 12px; cursor: pointer; margin-right: 6px; }
+  button.secondary { background: #3a404c; }
+  button:hover { filter: brightness(1.15); }
+  #info { background: #22262e; border: 1px solid #333a46; border-radius: 6px;
+          padding: 10px 12px; line-height: 1.7; white-space: pre-wrap;
+          word-break: break-all; }
+  #warn { color: #ff7b72; font-weight: bold; }
+  canvas { background: #000; border: 1px solid #333a46; border-radius: 4px;
+           image-rendering: pixelated; cursor: crosshair; }
+  .legend span { display: inline-block; margin-right: 12px; }
+  .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px;
+        margin-right: 4px; vertical-align: -1px; }
+  #regions { font-size: 11px; color: #8b93a1; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="panel">
+    <h1>洞穴生成器</h1>
+    <div class="row">
+      <label>Seed（相同 seed 必然复现同一布局）</label>
+      <input type="text" id="seed" value="alpha-cave-2026">
+    </div>
+    <div class="row">
+      <label>隧道弯曲度 <span id="curvVal">0.60</span>（仅重算隧道区域）</label>
+      <input type="range" id="curvature" min="0" max="1" step="0.05" value="0.6">
+    </div>
+    <div class="row">
+      <label>洞厅大小 <span id="sizeVal">1.10</span>（仅重算洞厅区域）</label>
+      <input type="range" id="chamberSize" min="0.5" max="2" step="0.05" value="1.1">
+    </div>
+    <div class="row">
+      <button id="regen">重新生成</button>
+      <button id="save" class="secondary">保存参数</button>
+      <button id="load" class="secondary">载入参数</button>
+    </div>
+    <div class="row">
+      <label>参数导入 / 导出（JSON）</label>
+      <textarea id="paramIO" rows="3" placeholder="保存或粘贴参数 JSON"></textarea>
+    </div>
+    <div class="row">点击画布：放置 / 移除岩柱（单对象修改，仅重算路径）</div>
+    <div id="warn"></div>
+    <div id="info"></div>
+    <div class="row legend">
+      <span><i class="sw" style="background:#3a3f4a"></i>岩壁</span>
+      <span><i class="sw" style="background:#8a7f66"></i>地面</span>
+      <span><i class="sw" style="background:#2f6fb8"></i>水域</span>
+      <span><i class="sw" style="background:#6e7686"></i>岩柱</span>
+      <span><i class="sw" style="background:#3fb950"></i>入口</span>
+      <span><i class="sw" style="background:#f85149"></i>出口</span>
+      <span><i class="sw" style="background:#e3b341"></i>可达路径</span>
+    </div>
+    <div id="regions"></div>
+  </div>
+  <canvas id="cv" width="768" height="512"></canvas>
+</div>
+<script src="cave.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
